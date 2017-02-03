@@ -31,7 +31,7 @@ public final class Datastore {
     
     private var viewContext: NSManagedObjectContext
     
-    public init(withModelURL modelURL: URL, documentURL: URL, autoMigrate: Bool = false) {
+    public init(withModelURL modelURL: URL, documentURL: URL, autoMigrate: Bool = false, isReady: (() -> Void)? = nil) {
         guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
             fatalError("Error initializing mom from: \(modelURL)")
         }
@@ -62,6 +62,12 @@ public final class Datastore {
             }
             
             BaseLog.coreData.log(.trace, "Added store")
+            
+            if let completion = isReady {
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }
         }
     }
     
