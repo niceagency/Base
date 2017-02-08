@@ -167,8 +167,11 @@ fileprivate extension HttpMethod {
     
     func map<B>(f: (Body) -> B) -> HttpMethod<B> {
         switch self {
-        case .get:
-            return .get
+        case .get(let body):
+            if let b = body {
+                return .get(f(b))
+            }
+            return .get(nil)
         case .post(let body):
             if let b = body {
                 return .post(f(b))
@@ -179,8 +182,11 @@ fileprivate extension HttpMethod {
                 return .put(f(b))
             }
             return .put(nil)
-        case .delete:
-            return .delete
+        case .delete(let body):
+            if let b = body {
+                return .delete(f(b))
+            }
+            return .delete(nil)
         }
     }
 }

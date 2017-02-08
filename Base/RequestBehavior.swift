@@ -29,11 +29,17 @@ public extension RequestBehavior {
     func afterFailure(error: Error?) { }
 }
 
-public struct EmptyRequestBehavior: RequestBehavior { }
+public struct EmptyRequestBehavior: RequestBehavior {
+    public init() {}
+}
 
 public struct CompositeRequestBehavior: RequestBehavior {
     
     let behaviors: [RequestBehavior]
+    
+    public init(behaviors: [RequestBehavior]) {
+        self.behaviors = behaviors
+    }
     
     public var additionalHeaders: [(String, String)] {
         return behaviors.reduce([(String, String)](), { sum, behavior in

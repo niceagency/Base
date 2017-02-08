@@ -9,10 +9,10 @@
 import Foundation
 
 public enum HttpMethod<Body> {
-    case get
+    case get(Body?)
     case post(Body?)
     case put(Body?)
-    case delete
+    case delete(Body?)
 }
 
 public enum CancellationPolicy {
@@ -32,7 +32,7 @@ public struct Resource<A> {
     public let cancellationPolicy: CancellationPolicy
     
     public init(endpoint: String,
-         method: HttpMethod<Any> = .get,
+         method: HttpMethod<Any> = .get(nil),
          query: [URLQueryItem]? = nil,
          headerProvider: HeaderProvider? = nil,
          cancellationPolicy: CancellationPolicy = .none,

@@ -48,10 +48,10 @@ public enum BaseLevel: Int, LogLevel {
 
 public extension BaseDomain {
     
-    private static let networkSpec: Log<BaseDomain, BaseLevel>.LoggerSpec = (domain: .network, level: .none, logger: nil)
-    private static let modelSpec: Log<BaseDomain, BaseLevel>.LoggerSpec = (domain: .coreData, level: .none, logger: nil)
-    
-    static var logStore = Log<BaseDomain, BaseLevel>(specs: [networkSpec, modelSpec])
+    static var logStore = Log<BaseDomain, BaseLevel>(specs: [
+        (domain: .network, level: .none, logger: nil),
+        (domain: .coreData, level: .none, logger: nil)
+        ])
     
     public func log<T>(_ level: BaseLevel, _ object: T, filename: String = #file, line: Int = #line, funcname: String = #function) {
         let logger = BaseDomain.logStore.log(self)
