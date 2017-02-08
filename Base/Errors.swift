@@ -21,15 +21,15 @@ public extension ErrorType {
 }
 
 public struct NAError<T: ErrorType>: Error {
-    let type: T
-    let internalError: Error?
+    public let type: T
+    public let internalError: Error?
     
     public init(type: T, internalError: Error? = nil) {
         self.type = type
         self.internalError = internalError
     }
     
-    var localizedDescription: String {
+    public var localizedDescription: String {
         return "\(type.domain) - \(type.description) (\(type.code))"
     }
 }
