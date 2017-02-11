@@ -235,9 +235,15 @@ fileprivate extension URLRequest {
         }
         
         httpMethod = method.name
-        if case let .post(data) = method {
+        
+        switch method {
+        case let .get(data):
             httpBody = data
-        } else if case let .put(data) = method {
+        case let .post(data):
+            httpBody = data
+        case let .put(data):
+            httpBody = data
+        case let .delete(data):
             httpBody = data
         }
         
