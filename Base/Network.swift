@@ -34,6 +34,8 @@ public struct Network {
                 } catch {
                     BaseLog.network.log(.error, "Unable to start reachability notifier: \(error)")
                 }
+                
+                Network.ReachabilityTester.isReachable = tester.isReachable
             } else {
                 Network.ReachabilityTester.isReachable = true
             }
