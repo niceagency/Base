@@ -22,12 +22,17 @@ public enum CancellationPolicy {
     case pattern(String)
 }
 
+public enum ParseResult<T> {
+    case success(T)
+    case error(Error)
+}
+
 public struct Resource<A> {
     public let endpoint: String
     public let method: HttpMethod<Any>
     public let query: [URLQueryItem]?
     public let headerProvider: HeaderProvider?
-    public let parse: (Data) -> (A?, Error?)
+    public let parse: (Data) -> (ParseResult<A>)
     public let errorResponseHandler: ((Int, Data?) -> (Error?))?
     public let cancellationPolicy: CancellationPolicy
     
@@ -37,7 +42,7 @@ public struct Resource<A> {
          headerProvider: HeaderProvider? = nil,
          cancellationPolicy: CancellationPolicy = .none,
          errorResponseHandler: ((Int, Data?) -> (Error?))? = nil,
-         parse: @escaping (Data) -> (A?, Error?)) {
+         parse: @escaping (Data) -> (ParseResult<A>)) {
         
         self.endpoint = endpoint
         self.method = method

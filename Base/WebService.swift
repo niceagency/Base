@@ -131,12 +131,11 @@ public final class Webservice {
                 
                 let result = resource.parse(data)
                 
-                if let value = result.0 {
+                switch result {
+                case .success(let value):
                     success(value)
-                } else if let error = result.1 {
+                case .error(let error):
                     failure(error)
-                } else {
-                    failure(NAError(type: DataError.parse))
                 }
             } else {
                 BaseLog.network.log(.trace, "no data returned")
