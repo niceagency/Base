@@ -44,10 +44,13 @@ public enum DataError: Int, ErrorType {
         switch self {
         case .invalidJSON:
             return NSLocalizedString("error.data.invalid json", comment: "")
+        case .parse:
+            return NSLocalizedString("error.data.parse.failure", comment: "")
         }
     }
     
     case invalidJSON = 13001
+    case parse = 13002
 }
 
 public

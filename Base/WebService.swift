@@ -12,6 +12,11 @@ public protocol UnauthorizedResponseHandler {
     func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse)
 }
 
+public enum LoadResult<T> {
+    case success(T)
+    case error(Error)
+}
+
 public final class Webservice {
     
     let baseURL: URL
@@ -30,7 +35,7 @@ public final class Webservice {
     
     public func request<A>(_ resource: Resource<A>,
                         withBehavior additionalBehavior: RequestBehavior = EmptyRequestBehavior(),
-                        completion: @escaping (A?, Error?) -> ()) {
+                        completion: @escaping (LoadResult<A>) -> ()) {
         
         let behavior = CompositeRequestBehavior(behaviors: [ self.behavior, additionalBehavior ])
         
@@ -56,15 +61,15 @@ public final class Webservice {
         
         behavior.beforeSend()
         
-        let success: ((A?, Error?) -> ()) = { result, error in
+        let success: ((A) -> ()) = { result in
             DispatchQueue.main.async {
-                completion(result, error)
+                completion(.success(result))
                 behavior.afterComplete()
             }
         }
-        let failure: ((Error?) -> ()) = { error in
+        let failure: ((Error) -> ()) = { error in
             DispatchQueue.main.async {
-                completion(nil, error)
+                completion(.error(error))
                 behavior.afterFailure(error: error)
             }
         }
@@ -72,7 +77,7 @@ public final class Webservice {
         let task = session.dataTask(with: request) { data, response, error in
             BaseLog.network.log(.trace, "done")
             
-            if let error = error as? NSError {
+            if let error = error as NSError? {
                 let isCancelled = error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled
                 
                 // Surpress all cancelled request errors
@@ -125,11 +130,18 @@ public final class Webservice {
                 BaseLog.network.log(.trace, "data to parse")
                 
                 let result = resource.parse(data)
-                success(result.0, result.1)
+                
+                if let value = result.0 {
+                    success(value)
+                } else if let error = result.1 {
+                    failure(error)
+                } else {
+                    failure(NAError(type: DataError.parse))
+                }
             } else {
                 BaseLog.network.log(.trace, "no data returned")
                 
-                failure(error)
+                failure(error ?? NAError(type: NetworkError.httpError(-1)))
             }
         }
         
