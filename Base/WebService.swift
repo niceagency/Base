@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol UnauthorizedResponseHandler {
-    func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse)
+    func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse, data: Data?)
 }
 
 public enum LoadResult<T> {
@@ -118,7 +118,7 @@ public final class Webservice {
                     
                     if statusCode == 401 {
                         DispatchQueue.main.async {
-                            self.unauthorizedResponseHandler?.authorizedRequestDidFail(request: request, response: response)
+                            self.unauthorizedResponseHandler?.authorizedRequestDidFail(request: request, response: response, data: data)
                         }
                     }
                     
