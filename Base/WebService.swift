@@ -12,11 +12,6 @@ public protocol UnauthorizedResponseHandler {
     func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse, data: Data?)
 }
 
-public enum LoadResult<T> {
-    case success(T)
-    case error(Error)
-}
-
 public final class Webservice {
     
     let baseURL: URL
@@ -35,7 +30,7 @@ public final class Webservice {
     
     public func request<A>(_ resource: Resource<A>,
                         withBehavior additionalBehavior: RequestBehavior = EmptyRequestBehavior(),
-                        completion: @escaping (LoadResult<A>) -> ()) {
+                        completion: @escaping (Result<A>) -> ()) {
         
         let behavior = CompositeRequestBehavior(behaviors: [ self.behavior, additionalBehavior ])
         
