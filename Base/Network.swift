@@ -58,8 +58,8 @@ public struct Network {
             }
         }
         
-        public static func add(baseURL: String, authorizationHandler: UnauthorizedResponseHandler? = nil, session: URLSession = URLSession.shared) {
-            webservices[baseURL] = Webservice(baseURL: URL(string: baseURL)!, unauthorizedResponseHandler: authorizationHandler, session: session)
+        public static func add(baseURL: String, authorizationHandler: UnauthorizedResponseHandler? = nil, defaultHeaders: HeaderProvider? = nil, session: URLSession = URLSession.shared) {
+            webservices[baseURL] = Webservice(baseURL: URL(string: baseURL)!, unauthorizedResponseHandler: authorizationHandler, defaultHeaders: defaultHeaders, session: session)
         }
         
         public static func baseURL(_ baseURL: String) -> Webservice {

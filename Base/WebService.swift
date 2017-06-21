@@ -17,13 +17,15 @@ public final class Webservice {
     let baseURL: URL
     let session: URLSession
     private let unauthorizedResponseHandler: UnauthorizedResponseHandler?
+    private let defaultHeaders: HeaderProvider?
     
     public var behavior: RequestBehavior = EmptyRequestBehavior()
     
-    init(baseURL: URL, unauthorizedResponseHandler: UnauthorizedResponseHandler? = nil, session: URLSession = URLSession.shared) {
+    init(baseURL: URL, unauthorizedResponseHandler: UnauthorizedResponseHandler? = nil, defaultHeaders: HeaderProvider? = nil, session: URLSession = URLSession.shared) {
         self.baseURL = baseURL
         self.session = session
         self.unauthorizedResponseHandler = unauthorizedResponseHandler
+        self.defaultHeaders = defaultHeaders
     }
     
     static let validResponseCodes = [200,201,204]
@@ -34,7 +36,10 @@ public final class Webservice {
         
         let behavior = CompositeRequestBehavior(behaviors: [ self.behavior, additionalBehavior ])
         
-        let request = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: behavior.additionalHeaders)
+        var headers = behavior.additionalHeaders
+        headers.append(contentsOf: self.defaultHeaders?.headers() ?? [])
+        
+        let request = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: headers)
         
         BaseLog.network.log(.trace, request)
         
