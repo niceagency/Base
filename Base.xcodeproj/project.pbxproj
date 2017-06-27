@@ -10,7 +10,6 @@
 		B06A5D121E438FB200DAFF6B /* Log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D111E438FB200DAFF6B /* Log.framework */; };
 		B06A5D1F1E43914C00DAFF6B /* Datastore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D151E43914C00DAFF6B /* Datastore.swift */; };
 		B06A5D201E43914C00DAFF6B /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D161E43914C00DAFF6B /* Errors.swift */; };
-		B06A5D211E43914C00DAFF6B /* FlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D171E43914C00DAFF6B /* FlowCoordinator.swift */; };
 		B06A5D221E43914C00DAFF6B /* HeaderProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D181E43914C00DAFF6B /* HeaderProvider.swift */; };
 		B06A5D231E43914C00DAFF6B /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D191E43914C00DAFF6B /* Network.swift */; };
 		B06A5D241E43914C00DAFF6B /* Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D1A1E43914C00DAFF6B /* Pagination.swift */; };
@@ -31,7 +30,6 @@
 		B06A5D141E43903000DAFF6B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B06A5D151E43914C00DAFF6B /* Datastore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Datastore.swift; sourceTree = "<group>"; };
 		B06A5D161E43914C00DAFF6B /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
-		B06A5D171E43914C00DAFF6B /* FlowCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowCoordinator.swift; sourceTree = "<group>"; };
 		B06A5D181E43914C00DAFF6B /* HeaderProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderProvider.swift; sourceTree = "<group>"; };
 		B06A5D191E43914C00DAFF6B /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		B06A5D1A1E43914C00DAFF6B /* Pagination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pagination.swift; sourceTree = "<group>"; };
@@ -125,7 +123,7 @@
 		B06A5D2B1E4391CD00DAFF6B /* Remote */ = {
 			isa = PBXGroup;
 			children = (
-				B06A5D2C1E4391EC00DAFF6B /* Behvior */,
+				B06A5D2C1E4391EC00DAFF6B /* Behavior */,
 				B06A5D191E43914C00DAFF6B /* Network.swift */,
 				B06A5D1C1E43914C00DAFF6B /* Resource.swift */,
 				B06A5D1E1E43914C00DAFF6B /* WebService.swift */,
@@ -135,18 +133,17 @@
 			name = Remote;
 			sourceTree = "<group>";
 		};
-		B06A5D2C1E4391EC00DAFF6B /* Behvior */ = {
+		B06A5D2C1E4391EC00DAFF6B /* Behavior */ = {
 			isa = PBXGroup;
 			children = (
 				B06A5D1B1E43914C00DAFF6B /* RequestBehavior.swift */,
 			);
-			name = Behvior;
+			name = Behavior;
 			sourceTree = "<group>";
 		};
 		B06A5D2D1E4391FF00DAFF6B /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				B06A5D171E43914C00DAFF6B /* FlowCoordinator.swift */,
 				B06A5D2E1E4392DA00DAFF6B /* Data */,
 			);
 			name = UI;
@@ -263,7 +260,6 @@
 				B06A5D251E43914C00DAFF6B /* RequestBehavior.swift in Sources */,
 				B06A5D241E43914C00DAFF6B /* Pagination.swift in Sources */,
 				B06A5D271E43914C00DAFF6B /* UIRequestBehavior.swift in Sources */,
-				B06A5D211E43914C00DAFF6B /* FlowCoordinator.swift in Sources */,
 				B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */,
 				B06A5D221E43914C00DAFF6B /* HeaderProvider.swift in Sources */,
 			);
@@ -441,6 +437,7 @@
 				B06A5D0D1E4386AC00DAFF6B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

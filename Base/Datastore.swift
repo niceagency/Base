@@ -31,7 +31,7 @@ public final class Datastore {
     
     private var viewContext: NSManagedObjectContext
     
-    public init(withModelURL modelURL: URL, documentURL: URL, autoMigrate: Bool = false, isReady: (() -> Void)? = nil) {
+    public init(withModelURL modelURL: URL, documentURL: URL?, autoMigrate: Bool = false, isReady: (() -> Void)? = nil) {
         guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
             fatalError("Error initializing mom from: \(modelURL)")
         }
@@ -42,26 +42,40 @@ public final class Datastore {
         viewContext.persistentStoreCoordinator = psc
         
         DispatchQueue.global(qos: .userInteractive).async {
-            BaseLog.coreData.log(.trace, "Adding store at \(documentURL)")
             
-            do {
-                try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: nil)
-            } catch {
-                BaseLog.coreData.log(.error, "Error trying to load the store: \(error)\nDeleting and starting fresh...")
+            if let documentURL = documentURL {
                 
-                if autoMigrate {
-                    do {
-                        try FileManager.default.removeItem(at: documentURL)
-                        try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: nil)
-                    } catch {
-                        fatalError("Error migrating store: \(error)")
+                BaseLog.coreData.log(.trace, "Adding store at \(documentURL)")
+                
+                do {
+                    try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: nil)
+                } catch {
+                    BaseLog.coreData.log(.error, "Error trying to load the store: \(error)\nDeleting and starting fresh...")
+                    
+                    if autoMigrate {
+                        do {
+                            try FileManager.default.removeItem(at: documentURL)
+                            try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: nil)
+                        } catch {
+                            fatalError("Error migrating store: \(error)")
+                        }
+                    } else {
+                        fatalError("Error adding persistent store: \(error)")
                     }
-                } else {
+                }
+                
+                BaseLog.coreData.log(.trace, "Added store")
+
+            } else {
+                
+                BaseLog.coreData.log(.trace, "Creating in-memory store")
+                
+                do {
+                    try psc.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: documentURL, options: nil)
+                } catch {
                     fatalError("Error adding persistent store: \(error)")
                 }
             }
-            
-            BaseLog.coreData.log(.trace, "Added store")
             
             if let completion = isReady {
                 DispatchQueue.main.async {
