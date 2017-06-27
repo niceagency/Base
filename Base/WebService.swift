@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol UnauthorizedResponseHandler {
-    func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse, data: Data?)
+    func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse, data: Data?, retry: () -> Void)
 }
 
 public final class Webservice {
@@ -117,8 +117,12 @@ public final class Webservice {
                     failure(error)
                     
                     if statusCode == 401 {
+                        let retry = {
+                            self.request(resource, withBehavior: behavior, completion: completion)
+                        }
+                        
                         DispatchQueue.main.async {
-                            self.unauthorizedResponseHandler?.authorizedRequestDidFail(request: request, response: response, data: data)
+                            self.unauthorizedResponseHandler?.authorizedRequestDidFail(request: request, response: response, data: data, retry: retry)
                         }
                     }
                     
