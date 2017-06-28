@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol UnauthorizedResponseHandler {
-    func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse, data: Data?, retry: () -> Void)
+    func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse, data: Data?, retry: @escaping () -> Void)
 }
 
 public final class Webservice {
