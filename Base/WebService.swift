@@ -114,16 +114,16 @@ public final class Webservice {
                         }
                     }
                     
-                    failure(error)
-                    
-                    if statusCode == 401 {
+                    if statusCode == 401, let handler = self.unauthorizedResponseHandler {
                         let retry = {
                             self.request(resource, withBehavior: behavior, completion: completion)
                         }
                         
                         DispatchQueue.main.async {
-                            self.unauthorizedResponseHandler?.authorizedRequestDidFail(request: request, response: response, data: data, retry: retry)
+                            handler.authorizedRequestDidFail(request: request, response: response, data: data, retry: retry)
                         }
+                    } else {
+                        failure(error)
                     }
                     
                     return
