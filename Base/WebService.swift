@@ -177,6 +177,7 @@ fileprivate extension HttpMethod {
         case .post: return "POST"
         case .put: return "PUT"
         case .delete: return "DELETE"
+        case .patch: return "PATCH"
         }
     }
     
@@ -202,6 +203,11 @@ fileprivate extension HttpMethod {
                 return .delete(f(b))
             }
             return .delete(nil)
+        case .patch(let body):
+            if let b = body {
+                return .patch(f(b))
+            }
+            return .patch(nil)
         }
     }
 }
@@ -259,6 +265,8 @@ fileprivate extension URLRequest {
         case let .put(data):
             httpBody = data
         case let .delete(data):
+            httpBody = data
+        case let .patch(data):
             httpBody = data
         }
         

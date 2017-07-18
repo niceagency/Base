@@ -12,6 +12,7 @@ public enum HttpMethod<Body> {
     case get(Body?)
     case post(Body?)
     case put(Body?)
+    case patch(Body?)
     case delete(Body?)
 }
 
