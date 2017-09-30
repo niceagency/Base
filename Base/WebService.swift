@@ -14,8 +14,8 @@ public protocol UnauthorizedResponseHandler {
 
 public final class Webservice {
     
-    let baseURL: URL
-    let session: URLSession
+    public let baseURL: URL
+    public let session: URLSession
     private let unauthorizedResponseHandler: UnauthorizedResponseHandler?
     private let defaultHeaders: HeaderProvider?
     
@@ -28,7 +28,8 @@ public final class Webservice {
         self.defaultHeaders = defaultHeaders
     }
     
-    static let validResponseCodes = [200,201,204]
+    public var validResponseCodes = [200,201,204]
+    public var authFailureResponseCodes = [401]
     
     public func request<A>(_ resource: Resource<A>,
                         withBehavior additionalBehavior: RequestBehavior = EmptyRequestBehavior(),
@@ -101,7 +102,7 @@ public final class Webservice {
             if let response = response as? HTTPURLResponse {
                 let statusCode = response.statusCode
                 
-                if !Webservice.validResponseCodes.contains(statusCode) {
+                if !self.validResponseCodes.contains(statusCode) {
                     
                     // Default to an HTTP error in case caller did not provide a response error handler
                     var error: Error = NAError(type: NetworkError.httpError(statusCode))
@@ -114,7 +115,7 @@ public final class Webservice {
                         }
                     }
                     
-                    if statusCode == 401, let handler = self.unauthorizedResponseHandler {
+                    if self.authFailureResponseCodes.contains(statusCode), let handler = self.unauthorizedResponseHandler {
                         let retry = {
                             self.request(resource, withBehavior: behavior, completion: completion)
                         }
