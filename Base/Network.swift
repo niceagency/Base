@@ -52,14 +52,26 @@ public struct Network {
     public struct Webservices {
         private static var webservices: [String : Webservice] = [:]
         
-        public static func add(baseURLs: [String]) {
+        @discardableResult public static func add(baseURLs: [String]) -> [Webservice] {
+            var services: [Webservice] = []
+            
             for baseURL in baseURLs {
-                webservices[baseURL] = Webservice(baseURL: URL(string: baseURL)!)
+                let webservice = Webservice(baseURL: URL(string: baseURL)!)
+                
+                webservices[baseURL] = webservice
+                services.append(webservice)
             }
+            
+            return services
         }
         
-        public static func add(baseURL: String, authorizationHandler: UnauthorizedResponseHandler? = nil, defaultHeaders: HeaderProvider? = nil, session: URLSession = URLSession.shared) {
-            webservices[baseURL] = Webservice(baseURL: URL(string: baseURL)!, unauthorizedResponseHandler: authorizationHandler, defaultHeaders: defaultHeaders, session: session)
+        @discardableResult public static func add(baseURL: String, authorizationHandler: UnauthorizedResponseHandler? = nil, defaultHeaders: HeaderProvider? = nil, session: URLSession = URLSession.shared) -> Webservice {
+            
+            let webservice = Webservice(baseURL: URL(string: baseURL)!, unauthorizedResponseHandler: authorizationHandler, defaultHeaders: defaultHeaders, session: session)
+            
+            webservices[baseURL] = webservice
+            
+            return webservice
         }
         
         public static func baseURL(_ baseURL: String) -> Webservice {
