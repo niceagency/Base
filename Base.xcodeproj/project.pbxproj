@@ -19,6 +19,7 @@
 		B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D1E1E43914C00DAFF6B /* WebService.swift */; };
 		B06A5D321E43931200DAFF6B /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D311E43931200DAFF6B /* Reachability.framework */; };
 		B06A5D341E43944C00DAFF6B /* BaseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D331E43944C00DAFF6B /* BaseLog.swift */; };
+		B0FF57141FA0D9B80078F1B2 /* UIView+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		B06A5D1E1E43914C00DAFF6B /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		B06A5D311E43931200DAFF6B /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
 		B06A5D331E43944C00DAFF6B /* BaseLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseLog.swift; sourceTree = "<group>"; };
+		B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+AutoLayout.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 		B06A5D2D1E4391FF00DAFF6B /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				B0FF57121FA0D98B0078F1B2 /* Layout */,
 				B06A5D2E1E4392DA00DAFF6B /* Data */,
 			);
 			name = UI;
@@ -171,6 +174,14 @@
 				B06A5D1D1E43914C00DAFF6B /* UIRequestBehavior.swift */,
 			);
 			name = Behavior;
+			sourceTree = "<group>";
+		};
+		B0FF57121FA0D98B0078F1B2 /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */,
+			);
+			name = Layout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,6 +272,7 @@
 				B06A5D241E43914C00DAFF6B /* Pagination.swift in Sources */,
 				B06A5D271E43914C00DAFF6B /* UIRequestBehavior.swift in Sources */,
 				B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */,
+				B0FF57141FA0D9B80078F1B2 /* UIView+AutoLayout.swift in Sources */,
 				B06A5D221E43914C00DAFF6B /* HeaderProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
