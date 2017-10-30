@@ -33,7 +33,7 @@ open class Coordinator {
         return true
     }
     
-    public func pushChild(viewController vc: UIViewController, animated: Bool) {
+    open func pushChild(viewController vc: UIViewController, animated: Bool) {
         navigationController.pushViewController(vc, animated: animated)
         
         childViewControllers.append(WeakViewController(vc: vc))
@@ -41,7 +41,7 @@ open class Coordinator {
         destroyCompleteChildren()
     }
     
-    public func present(viewController vc: UIViewController, animated: Bool, completion: (() -> Void)?) {
+    open func present(viewController vc: UIViewController, animated: Bool, completion: (() -> Void)?) {
         navigationController.present(vc, animated: animated, completion: completion)
         
         childViewControllers.append(WeakViewController(vc: vc))
@@ -49,7 +49,7 @@ open class Coordinator {
         destroyCompleteChildren()
     }
     
-    public func noteDidReturn(child vc: UIViewController) {
+    open func noteDidReturn(child vc: UIViewController) {
         childViewControllers.append(WeakViewController(vc: vc))
         
         destroyCompleteChildren()
@@ -57,11 +57,11 @@ open class Coordinator {
     
     //MARK:
     
-    public func destroyCompleteChildren() {
+    open func destroyCompleteChildren() {
         childCoordinators.forEach({ $0.selfDestructIfPossible() })
     }
     
-    public func selfDestructIfPossible() {
+    open func selfDestructIfPossible() {
         destroyCompleteChildren()
         
         if !childViewControllers.contains(where: { $0.isValid }) {
@@ -73,7 +73,7 @@ open class Coordinator {
     
     //MARK:
     
-    public func add(child: Coordinator) {
+    open func add(child: Coordinator) {
         child.parent = self
         childCoordinators.append(child)
         
