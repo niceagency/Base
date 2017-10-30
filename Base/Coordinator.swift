@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class Coordinator {
+open class Coordinator {
     public let navigationController: UINavigationController
     
     private weak var parent: Coordinator?
@@ -33,7 +33,7 @@ public class Coordinator {
         return true
     }
     
-    public func pushChild(viewController vc: UIViewController, animated: Bool) {
+    open func pushChild(viewController vc: UIViewController, animated: Bool) {
         navigationController.pushViewController(vc, animated: animated)
         
         childViewControllers.append(WeakViewController(vc: vc))
@@ -41,7 +41,7 @@ public class Coordinator {
         destroyCompleteChildren()
     }
     
-    public func present(viewController vc: UIViewController, animated: Bool, completion: (() -> Void)?) {
+    open func present(viewController vc: UIViewController, animated: Bool, completion: (() -> Void)?) {
         navigationController.present(vc, animated: animated, completion: completion)
         
         childViewControllers.append(WeakViewController(vc: vc))
@@ -49,7 +49,7 @@ public class Coordinator {
         destroyCompleteChildren()
     }
     
-    public func noteDidReturn(child vc: UIViewController) {
+    open func noteDidReturn(child vc: UIViewController) {
         childViewControllers.append(WeakViewController(vc: vc))
         
         destroyCompleteChildren()
@@ -57,11 +57,11 @@ public class Coordinator {
     
     //MARK:
     
-    public func destroyCompleteChildren() {
+    open func destroyCompleteChildren() {
         childCoordinators.forEach({ $0.selfDestructIfPossible() })
     }
     
-    public func selfDestructIfPossible() {
+    open func selfDestructIfPossible() {
         destroyCompleteChildren()
         
         if !childViewControllers.contains(where: { $0.isValid }) {
@@ -73,7 +73,7 @@ public class Coordinator {
     
     //MARK:
     
-    public func add(child: Coordinator) {
+    open func add(child: Coordinator) {
         child.parent = self
         childCoordinators.append(child)
         
@@ -90,7 +90,7 @@ public class Coordinator {
     
     //MARK:
     
-    public func notifyCompletion() {
+    open func notifyCompletion() {
         parent?.didComplete(child: self)
     }
     
