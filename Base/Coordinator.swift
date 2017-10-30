@@ -90,7 +90,7 @@ open class Coordinator {
     
     //MARK:
     
-    public func notifyCompletion() {
+    open func notifyCompletion() {
         parent?.didComplete(child: self)
     }
     
