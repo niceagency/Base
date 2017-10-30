@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class Coordinator {
+open class Coordinator {
     public let navigationController: UINavigationController
     
     private weak var parent: Coordinator?
