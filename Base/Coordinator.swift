@@ -77,7 +77,7 @@ open class Coordinator {
         child.parent = self
         childCoordinators.append(child)
         
-        destroyCompleteChildren()
+       
     }
     
     private func remove(child: Coordinator) {
