@@ -19,6 +19,8 @@
 		B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D1E1E43914C00DAFF6B /* WebService.swift */; };
 		B06A5D321E43931200DAFF6B /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D311E43931200DAFF6B /* Reachability.framework */; };
 		B06A5D341E43944C00DAFF6B /* BaseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D331E43944C00DAFF6B /* BaseLog.swift */; };
+		B092983C1FCF16FE00F6D9DF /* TestableDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983B1FCF16FE00F6D9DF /* TestableDate.swift */; };
+		B092983E1FCF18C500F6D9DF /* TestSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983D1FCF18C500F6D9DF /* TestSystem.swift */; };
 		B0FF57141FA0D9B80078F1B2 /* UIView+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */; };
 		B0FF57171FA0EC9B0078F1B2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FF57161FA0EC9B0078F1B2 /* Coordinator.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +43,8 @@
 		B06A5D1E1E43914C00DAFF6B /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		B06A5D311E43931200DAFF6B /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
 		B06A5D331E43944C00DAFF6B /* BaseLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseLog.swift; sourceTree = "<group>"; };
+		B092983B1FCF16FE00F6D9DF /* TestableDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestableDate.swift; sourceTree = "<group>"; };
+		B092983D1FCF18C500F6D9DF /* TestSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSystem.swift; sourceTree = "<group>"; };
 		B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+AutoLayout.swift"; sourceTree = "<group>"; };
 		B0FF57161FA0EC9B0078F1B2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,6 +87,7 @@
 			children = (
 				B06A5D2D1E4391FF00DAFF6B /* UI */,
 				B06A5D291E43915900DAFF6B /* Data */,
+				B092983A1FCF16DA00F6D9DF /* TestSupport */,
 				B06A5D071E4386AC00DAFF6B /* Info.plist */,
 			);
 			path = Base;
@@ -177,6 +182,15 @@
 				B06A5D1D1E43914C00DAFF6B /* UIRequestBehavior.swift */,
 			);
 			name = Behavior;
+			sourceTree = "<group>";
+		};
+		B092983A1FCF16DA00F6D9DF /* TestSupport */ = {
+			isa = PBXGroup;
+			children = (
+				B092983D1FCF18C500F6D9DF /* TestSystem.swift */,
+				B092983B1FCF16FE00F6D9DF /* TestableDate.swift */,
+			);
+			name = TestSupport;
 			sourceTree = "<group>";
 		};
 		B0FF57121FA0D98B0078F1B2 /* Layout */ = {
@@ -278,9 +292,11 @@
 				B06A5D261E43914C00DAFF6B /* Resource.swift in Sources */,
 				B06A5D341E43944C00DAFF6B /* BaseLog.swift in Sources */,
 				B06A5D201E43914C00DAFF6B /* Errors.swift in Sources */,
+				B092983E1FCF18C500F6D9DF /* TestSystem.swift in Sources */,
 				B06A5D1F1E43914C00DAFF6B /* Datastore.swift in Sources */,
 				B06A5D251E43914C00DAFF6B /* RequestBehavior.swift in Sources */,
 				B06A5D241E43914C00DAFF6B /* Pagination.swift in Sources */,
+				B092983C1FCF16FE00F6D9DF /* TestableDate.swift in Sources */,
 				B06A5D271E43914C00DAFF6B /* UIRequestBehavior.swift in Sources */,
 				B0FF57171FA0EC9B0078F1B2 /* Coordinator.swift in Sources */,
 				B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */,
