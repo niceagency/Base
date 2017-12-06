@@ -21,6 +21,7 @@
 		B06A5D341E43944C00DAFF6B /* BaseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D331E43944C00DAFF6B /* BaseLog.swift */; };
 		B092983C1FCF16FE00F6D9DF /* TestableDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983B1FCF16FE00F6D9DF /* TestableDate.swift */; };
 		B092983E1FCF18C500F6D9DF /* TestSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983D1FCF18C500F6D9DF /* TestSystem.swift */; };
+		B09298401FD57ABA00F6D9DF /* TestURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983F1FD57ABA00F6D9DF /* TestURLSession.swift */; };
 		B0FF57141FA0D9B80078F1B2 /* UIView+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */; };
 		B0FF57171FA0EC9B0078F1B2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FF57161FA0EC9B0078F1B2 /* Coordinator.swift */; };
 /* End PBXBuildFile section */
@@ -45,6 +46,7 @@
 		B06A5D331E43944C00DAFF6B /* BaseLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseLog.swift; sourceTree = "<group>"; };
 		B092983B1FCF16FE00F6D9DF /* TestableDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestableDate.swift; sourceTree = "<group>"; };
 		B092983D1FCF18C500F6D9DF /* TestSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSystem.swift; sourceTree = "<group>"; };
+		B092983F1FD57ABA00F6D9DF /* TestURLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestURLSession.swift; sourceTree = "<group>"; };
 		B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+AutoLayout.swift"; sourceTree = "<group>"; };
 		B0FF57161FA0EC9B0078F1B2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -189,6 +191,7 @@
 			children = (
 				B092983D1FCF18C500F6D9DF /* TestSystem.swift */,
 				B092983B1FCF16FE00F6D9DF /* TestableDate.swift */,
+				B092983F1FD57ABA00F6D9DF /* TestURLSession.swift */,
 			);
 			name = TestSupport;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				B092983E1FCF18C500F6D9DF /* TestSystem.swift in Sources */,
 				B06A5D1F1E43914C00DAFF6B /* Datastore.swift in Sources */,
 				B06A5D251E43914C00DAFF6B /* RequestBehavior.swift in Sources */,
+				B09298401FD57ABA00F6D9DF /* TestURLSession.swift in Sources */,
 				B06A5D241E43914C00DAFF6B /* Pagination.swift in Sources */,
 				B092983C1FCF16FE00F6D9DF /* TestableDate.swift in Sources */,
 				B06A5D271E43914C00DAFF6B /* UIRequestBehavior.swift in Sources */,
