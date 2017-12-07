@@ -142,6 +142,10 @@ final class TestURLSession: URLSession {
         self.testMapping = testMapping
     }
     
+    override func getAllTasks(completionHandler: @escaping ([URLSessionTask]) -> Void) {
+        completionHandler([])
+    }
+    
     override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         let url = request.url!
         let stubResponse = testMapping.config(matchingURL: url)
