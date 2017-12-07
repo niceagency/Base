@@ -26,6 +26,12 @@ public struct URLResponseStub {
     public let statusCode: Int
     public let headers: [String: String]?
     public let payloadFileName: String?
+    
+    public init(statusCode: Int, headers: [String: String]?, payloadFileName: String?) {
+        self.statusCode = statusCode
+        self.headers = headers
+        self.payloadFileName = payloadFileName
+    }
 } 
 
 public struct TestURLSessionConfiguration {
