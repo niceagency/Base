@@ -128,6 +128,8 @@ final class StubURLSessionDataTask: URLSessionDataTask {
             let url = Bundle().url(forResource: String(parts[0]), withExtension: String(parts[1]), subdirectory: "TestStubDataFiles")!
             
             data = try! Data(contentsOf: url)
+        } else {
+            data = "".data(using: .utf8)
         }
         
         handler(data, self.stubURLResponse, nil)
