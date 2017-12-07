@@ -30,4 +30,12 @@ public struct TestSystem {
             TestableDate.testReferenceDate = formatter.date(from: testReferenceDateSetting)
         }
     }
+    
+    public static func environmentRepresentation(forTestReferenceDate date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX") 
+        formatter.dateFormat = BaseTestableDate_Environment_format
+        
+        return formatter.string(from: date)
+    }
 }
