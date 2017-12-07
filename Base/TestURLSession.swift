@@ -13,12 +13,12 @@ public let BaseTestableSession_Config_Environment_key = "TEST_URL_SESSION_CONFIG
 public struct URLMatch {
     public let host: String
     public let path: String
-    public let query: [URLQueryItem]
+    public let query: [URLQueryItem]?
     
-    init(host: String, path: String, query: [URLQueryItem]) {
+    public init(host: String, path: String, query: [URLQueryItem]?) {
         self.host = host
         self.path = path
-        self.query = query.sorted(by: { $0.name < $1.name })
+        self.query = query?.sorted(by: { $0.name < $1.name })
     }
 }
 
@@ -73,13 +73,14 @@ public struct TestURLSessionConfiguration {
         for (key, value) in matchingConfig {
             if key.host == components.host,
                 key.path == components.path,
-                key.query.count == components.queryItems?.count {
+                key.query?.count == components.queryItems?.count {
                 
                 var fullMatch = true
                 
-                if !key.query.isEmpty, let matchQuery = components.queryItems {
-                    for item in key.query {
-                        fullMatch = fullMatch && matchQuery.contains(item)
+                if let matchQuery = key.query, !matchQuery.isEmpty,
+                    let testQuery = components.queryItems {
+                    for item in matchQuery {
+                        fullMatch = fullMatch && testQuery.contains(item)
                     }
                 }
                 
@@ -147,6 +148,17 @@ final class TestURLSession: URLSession {
 
 //MARK: -
 
+func ==<T: Equatable>(lhs: [T]?, rhs: [T]?) -> Bool {
+    switch (lhs, rhs) {
+    case (.some(let lhs), .some(let rhs)):
+        return lhs == rhs
+    case (.none, .none):
+        return true
+    default:
+        return false
+    }
+}
+
 extension URLMatch: Hashable {
     public var hashValue: Int {
         return host.hashValue ^ path.hashValue
@@ -171,17 +183,20 @@ extension URLMatch: EnvironmentRepresentable {
         host = rep["host"] as! String
         path = rep["path"] as! String
         
-        let items = rep["query"] as! [[String]]
+        let items = rep["query"] as? [[String]]
         
-        query = items.map({ URLQueryItem(name: $0[0], value: $0[1]) }) 
+        query = items?.map({ URLQueryItem(name: $0[0], value: $0[1]) }) 
     }
     
     func environmentRepresentation() -> [String : Any] {
-        let rep: [String:Any] = [
+        var rep: [String:Any] = [
             "host": host,
             "path": path,
-            "query": query.map({ [$0.name, $0.value!] })
-        ]
+            ]
+        
+        if let query = query {
+            rep["query"] = query.map({ [$0.name, $0.value!] })
+        }
         
         return rep
     }
