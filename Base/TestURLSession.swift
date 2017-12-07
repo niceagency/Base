@@ -125,7 +125,7 @@ final class StubURLSessionDataTask: URLSessionDataTask {
         
         if let payloadFileName = self.responseStub.payloadFileName {
             let parts = payloadFileName.split(separator: ".")
-            let url = Bundle().url(forResource: String(parts[0]), withExtension: String(parts[1]), subdirectory: "TestStubDataFiles")!
+            let url = Bundle.main.url(forResource: String(parts[0]), withExtension: String(parts[1]), subdirectory: "TestStubDataFiles")!
             
             data = try! Data(contentsOf: url)
         } else {
