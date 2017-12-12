@@ -172,16 +172,7 @@ fileprivate extension Resource {
 }
 
 fileprivate extension HttpMethod {
-    var name: String {
-        switch self {
-        case .get: return "GET"
-        case .post: return "POST"
-        case .put: return "PUT"
-        case .delete: return "DELETE"
-        case .patch: return "PATCH"
-        }
-    }
-    
+ 
     func map<B>(f: (Body) -> B) -> HttpMethod<B> {
         switch self {
         case .get(let body):

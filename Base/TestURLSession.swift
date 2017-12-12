@@ -14,9 +14,9 @@ public struct URLMatch {
     public let host: String
     public let path: String
     public let query: [URLQueryItem]?
-    public let method: String
+    public let method: HttpMethod<Any>
     
-    public init(method: String, host: String, path: String, query: [URLQueryItem]?) {
+    public init(method: HttpMethod<Any>, host: String, path: String, query: [URLQueryItem]?) {
         self.host = host
         self.path = path
         self.query = query?.sorted(by: { $0.name < $1.name })
@@ -84,7 +84,7 @@ public struct TestURLSessionConfiguration {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         
         for (key, value) in matchingConfig {
-            if  key.method == method,
+            if  key.method.name == method,
                 key.host == components.host,
                 key.path == components.path,
                 key.query?.count == components.queryItems?.count {
@@ -200,7 +200,7 @@ extension URLMatch: EnvironmentRepresentable {
     init(environmentRepresentation rep: [String:Any]) {
         host = rep["host"] as! String
         path = rep["path"] as! String
-        method = rep["method"] as! String
+        method = rep["method"] as! HttpMethod
         let items = rep["query"] as? [[String]]
         
         query = items?.map({ URLQueryItem(name: $0[0], value: $0[1]) }) 
