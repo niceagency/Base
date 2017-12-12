@@ -196,11 +196,31 @@ protocol EnvironmentRepresentable {
     func environmentRepresentation() -> [String:Any]
 }
 
+private extension HttpMethod {
+    static func from(methodName name: String) -> HttpMethod {
+        switch name {
+        case "GET":
+            return .get(nil)
+        case "POST":
+            return .post(nil)
+        case "PUT":
+            return .put(nil)
+        case "DELETE":
+            return .delete(nil)
+        case "PATCH":
+            return .patch(nil)
+        default:
+            assertionFailure()
+            return .get(nil)
+        }
+    }
+}
+
 extension URLMatch: EnvironmentRepresentable {
     init(environmentRepresentation rep: [String:Any]) {
         host = rep["host"] as! String
         path = rep["path"] as! String
-        method = rep["method"] as! HttpMethod
+        method = HttpMethod.from(methodName: rep["method"] as! String)
         let items = rep["query"] as? [[String]]
         
         query = items?.map({ URLQueryItem(name: $0[0], value: $0[1]) }) 
@@ -208,7 +228,7 @@ extension URLMatch: EnvironmentRepresentable {
     
     func environmentRepresentation() -> [String : Any] {
         var rep: [String:Any] = [
-            "method": method,
+            "method": method.name,
             "host": host,
             "path": path,
             ]
