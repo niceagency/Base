@@ -42,7 +42,7 @@ public final class Webservice {
         
         BaseLog.network.log(.trace, plannedRequest)
         
-        let request = behavior.modify(request: plannedRequest) 
+        let request = behavior.modify(planned: plannedRequest) 
             
         if request != plannedRequest {
             BaseLog.network.log(.trace, request)
@@ -64,7 +64,7 @@ public final class Webservice {
             }
         }
         
-        behavior.beforeSend(ofRequest: request)
+        behavior.before(sending: request)
         
         let retry = {
             self.request(resource, withBehavior: behavior, completion: completion)
@@ -73,13 +73,13 @@ public final class Webservice {
         let success: ((URLResponse?, A) -> ()) = { response, result in
             DispatchQueue.main.async {
                 completion(.success(result))
-                behavior.afterComplete(withResponse: response)
+                behavior.after(completion: response)
             }
         }
         let failure: ((Error) -> ()) = { error in
             DispatchQueue.main.async {
                 completion(.error(error))
-                behavior.afterFailure(error: error, retry: retry)
+                behavior.after(failure: error, retry: retry)
             }
         }
         
@@ -91,7 +91,7 @@ public final class Webservice {
                 
                 // Suppress all cancelled request errors
                 guard !isCancelled else {
-                    behavior.afterComplete(withResponse: response)
+                    behavior.after(completion: response)
                     return
                 }
                 
