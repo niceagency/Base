@@ -9,24 +9,19 @@
 import Foundation
 
 public protocol RequestBehavior {
+    func modify(planned request: URLRequest) -> URLRequest
+    func before(sending request: URLRequest)
     
-    var additionalHeaders: [(String, String)] { get }
-    
-    func beforeSend()
-    
-    func afterComplete()
-    func afterFailure(error: Error?)
+    func after(completion response: URLResponse?)
+    func after(failure: Error?, retry: () -> Void)
 }
 
 public extension RequestBehavior {
-    var additionalHeaders: [(String, String)] {
-        return []
-    }
+    func modify(planned request: URLRequest) -> URLRequest { return request }
+    func before(sending: URLRequest) { }
     
-    func beforeSend() { }
-    
-    func afterComplete() { }
-    func afterFailure(error: Error?) { }
+    func after(completion: URLResponse?) { }
+    func after(failure: Error?, retry: () -> Void) { }
 }
 
 public struct EmptyRequestBehavior: RequestBehavior {
@@ -41,21 +36,23 @@ public struct CompositeRequestBehavior: RequestBehavior {
         self.behaviors = behaviors
     }
     
-    public var additionalHeaders: [(String, String)] {
-        return behaviors.reduce([(String, String)](), { sum, behavior in
-            return sum + behavior.additionalHeaders
-        })
+    public func modify(planned r: URLRequest) -> URLRequest {
+        var request = r
+        
+        behaviors.forEach({ request = $0.modify(planned: request) })
+        
+        return request
     }
     
-    public func beforeSend() {
-        behaviors.forEach({ $0.beforeSend() })
+    public func before(sending request: URLRequest) {
+        behaviors.forEach({ $0.before(sending: request) })
     }
     
-    public func afterComplete() {
-        behaviors.forEach({ $0.afterComplete() })
+    public func after(completion response: URLResponse?) {
+        behaviors.forEach({ $0.after(completion: response) })
     }
     
-    public func afterFailure(error: Error?) {
-        behaviors.forEach({ $0.afterFailure(error: error) })
+    public func after(failure: Error?, retry: () -> Void) {
+        behaviors.forEach({ $0.after(failure: failure, retry: retry) })
     }
 }
