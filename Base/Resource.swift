@@ -14,6 +14,16 @@ public enum HttpMethod<Body> {
     case put(Body?)
     case patch(Body?)
     case delete(Body?)
+    
+    var name: String {
+        switch self {
+        case .get: return "GET"
+        case .post: return "POST"
+        case .put: return "PUT"
+        case .delete: return "DELETE"
+        case .patch: return "PATCH"
+        }
+    }
 }
 
 public enum CancellationPolicy {
