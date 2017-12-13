@@ -77,10 +77,8 @@ public struct TestURLSessionConfiguration {
     }
     func config(matchingURLRequest request: URLRequest) -> URLResponseStub {
         guard let url = request.url, let method = request.httpMethod else {
-           
-            BaseLog.testSupport.log(.error, "URLRequest to match is missing URL or httpMethod")
-            assertionFailure("invalid request")
-            return URLResponseStub(environmentRepresentation: [:])
+            BaseLog.testSupport.log(.error, "URLRequest to match is missing URL or httpMethod url: \(String(describing: request.url)) method: \(String(describing: request.httpMethod)) ")
+            fatalError()
         }
         
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
@@ -105,9 +103,8 @@ public struct TestURLSessionConfiguration {
                 }
             }
         }
-        BaseLog.testSupport.log(.error, "Test URLRequest does not match actual URLRequest")
-        assertionFailure()
-        return URLResponseStub(environmentRepresentation: [:])
+        BaseLog.testSupport.log(.error, "Test URLRequest does not match actual URLRequest method: \(method) host: \(String(describing: components.host)) path: \(components.path) queries: \(String(describing: components.queryItems))")
+        fatalError()
     }
 }
 
@@ -212,9 +209,8 @@ private extension HttpMethod {
         case "PATCH":
             return .patch(nil)
         default:
-            BaseLog.testSupport.log(.error, "Invalid HttpMethod supplied")
-            assertionFailure()
-            return .get(nil)
+            BaseLog.testSupport.log(.error, "Invalid HttpMethod supplied: \(name)")
+            fatalError()
         }
     }
 }
