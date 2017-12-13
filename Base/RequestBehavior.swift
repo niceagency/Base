@@ -9,24 +9,19 @@
 import Foundation
 
 public protocol RequestBehavior {
+    func modify(request: URLRequest) -> URLRequest
+    func beforeSend(ofRequest: URLRequest)
     
-    var additionalHeaders: [(String, String)] { get }
-    
-    func beforeSend()
-    
-    func afterComplete()
-    func afterFailure(error: Error?)
+    func afterComplete(withResponse: URLResponse?)
+    func afterFailure(error: Error?, retry: () -> Void)
 }
 
 public extension RequestBehavior {
-    var additionalHeaders: [(String, String)] {
-        return []
-    }
+    func modify(request: URLRequest) -> URLRequest { return request }
+    func beforeSend(ofRequest: URLRequest) { }
     
-    func beforeSend() { }
-    
-    func afterComplete() { }
-    func afterFailure(error: Error?) { }
+    func afterComplete(withResponse: URLResponse?) { }
+    func afterFailure(error: Error?, retry: () -> Void) { }
 }
 
 public struct EmptyRequestBehavior: RequestBehavior {
@@ -41,21 +36,23 @@ public struct CompositeRequestBehavior: RequestBehavior {
         self.behaviors = behaviors
     }
     
-    public var additionalHeaders: [(String, String)] {
-        return behaviors.reduce([(String, String)](), { sum, behavior in
-            return sum + behavior.additionalHeaders
-        })
+    public func modify(request r: URLRequest) -> URLRequest {
+        var request = r
+        
+        behaviors.forEach({ request = $0.modify(request: request) })
+        
+        return request
     }
     
-    public func beforeSend() {
-        behaviors.forEach({ $0.beforeSend() })
+    public func beforeSend(ofRequest request: URLRequest) {
+        behaviors.forEach({ $0.beforeSend(ofRequest: request) })
     }
     
-    public func afterComplete() {
-        behaviors.forEach({ $0.afterComplete() })
+    public func afterComplete(withResponse response: URLResponse?) {
+        behaviors.forEach({ $0.afterComplete(withResponse: response) })
     }
     
-    public func afterFailure(error: Error?) {
-        behaviors.forEach({ $0.afterFailure(error: error) })
+    public func afterFailure(error: Error?, retry: () -> Void) {
+        behaviors.forEach({ $0.afterFailure(error: error, retry: retry) })
     }
 }

@@ -19,7 +19,7 @@ public struct URLMatch {
     public init(method: HttpMethod<Any>, host: String, path: String, query: [URLQueryItem]?) {
         self.host = host
         self.path = path
-        self.query = query?.sorted(by: { $0.name < $1.name })
+        self.query = query
         self.method = method
     }
 }

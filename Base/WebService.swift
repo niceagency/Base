@@ -36,13 +36,17 @@ public final class Webservice {
                         completion: @escaping (Result<A>) -> ()) {
         
         let behavior = CompositeRequestBehavior(behaviors: [ self.behavior, additionalBehavior ])
+        let headers = self.defaultHeaders?.headers() ?? []
         
-        var headers = behavior.additionalHeaders
-        headers.append(contentsOf: self.defaultHeaders?.headers() ?? [])
+        let plannedRequest = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: headers)
         
-        let request = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: headers)
+        BaseLog.network.log(.trace, plannedRequest)
         
-        BaseLog.network.log(.trace, request)
+        let request = behavior.modify(request: plannedRequest) 
+            
+        if request != plannedRequest {
+            BaseLog.network.log(.trace, request)
+        }
         
         let session = self.session
         let cancel = resource.cancellationPolicy
@@ -60,18 +64,22 @@ public final class Webservice {
             }
         }
         
-        behavior.beforeSend()
+        behavior.beforeSend(ofRequest: request)
         
-        let success: ((A) -> ()) = { result in
+        let retry = {
+            self.request(resource, withBehavior: behavior, completion: completion)
+        }
+        
+        let success: ((URLResponse?, A) -> ()) = { response, result in
             DispatchQueue.main.async {
                 completion(.success(result))
-                behavior.afterComplete()
+                behavior.afterComplete(withResponse: response)
             }
         }
         let failure: ((Error) -> ()) = { error in
             DispatchQueue.main.async {
                 completion(.error(error))
-                behavior.afterFailure(error: error)
+                behavior.afterFailure(error: error, retry: retry)
             }
         }
         
@@ -81,9 +89,9 @@ public final class Webservice {
             if let error = error as NSError? {
                 let isCancelled = error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled
                 
-                // Surpress all cancelled request errors
+                // Suppress all cancelled request errors
                 guard !isCancelled else {
-                    behavior.afterComplete()
+                    behavior.afterComplete(withResponse: response)
                     return
                 }
                 
@@ -116,10 +124,6 @@ public final class Webservice {
                     }
                     
                     if self.authFailureResponseCodes.contains(statusCode), let handler = self.unauthorizedResponseHandler {
-                        let retry = {
-                            self.request(resource, withBehavior: behavior, completion: completion)
-                        }
-                        
                         DispatchQueue.main.async {
                             handler.authorizedRequestDidFail(request: request, response: response, data: data, retry: retry)
                         }
@@ -138,7 +142,7 @@ public final class Webservice {
                 
                 switch result {
                 case .success(let value):
-                    success(value)
+                    success(response, value)
                 case .error(let error):
                     failure(error)
                 }

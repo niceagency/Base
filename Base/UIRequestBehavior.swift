@@ -14,17 +14,17 @@ public final class BackgroundTaskBehavior: RequestBehavior {
     
     private var identifier: UIBackgroundTaskIdentifier?
     
-    public func beforeSend() {
+    public func beforeSend(ofRequest: URLRequest) {
         identifier = application.beginBackgroundTask(expirationHandler: {
             self.endBackgroundTask()
         })
     }
     
-    public func afterComplete() {
+    public func afterComplete(withResponse: URLResponse?) {
         endBackgroundTask()
     }
     
-    public func afterFailure(error: Error?) {
+    public func afterFailure(error: Error?, retry: () -> Void) {
         endBackgroundTask()
     }
     
@@ -48,15 +48,15 @@ public final class NetworkActivityIndicatorBehavior: RequestBehavior {
     
     static let state = ActivityIndicatorState()
     
-    public func beforeSend() {
+    public func beforeSend(ofRequest: URLRequest) {
         NetworkActivityIndicatorBehavior.state.counter += 1
     }
     
-    public func afterComplete() {
+    public func afterComplete(withResponse: URLResponse?) {
         NetworkActivityIndicatorBehavior.state.counter -= 1
     }
     
-    public func afterFailure(error: Error?) {
+    public func afterFailure(error: Error?, retry: () -> Void) {
         NetworkActivityIndicatorBehavior.state.counter -= 1
     }
 }
