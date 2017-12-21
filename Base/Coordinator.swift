@@ -94,7 +94,7 @@ open class Coordinator {
         parent?.didComplete(child: self)
     }
     
-    public func didComplete(child: Coordinator) {
+    open func didComplete(child: Coordinator) {
         remove(child: child)
     }
 }
