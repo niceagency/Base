@@ -58,8 +58,7 @@ public enum DataError: Int, ErrorType {
     case parse = 13002
 }
 
-public
-enum NetworkError: ErrorType {
+public enum NetworkError: ErrorType {
     
     public var code: Int {
         switch self {
@@ -69,6 +68,8 @@ enum NetworkError: ErrorType {
             return 401
         case .noConnection(let (code,_)):
             return code
+        case .malformedURLProvided:
+            return 13003
         }
     }
     
@@ -80,10 +81,13 @@ enum NetworkError: ErrorType {
             return "Authentication details were rejected"
         case .noConnection(let (_, url)):
             return "No connection available for request to \(url)"
+        case .malformedURLProvided:
+            return "A malformed URL was provided to request"
         }
     }
     
     case httpError(Int)
     case authenticationError
     case noConnection(Int,String)
+    case malformedURLProvided
 }

@@ -32,18 +32,23 @@ public final class Webservice {
     public var authFailureResponseCodes = [401]
     
     public func request<A>(_ resource: Resource<A>,
-                        withBehavior additionalBehavior: RequestBehavior = EmptyRequestBehavior(),
-                        completion: @escaping (Result<A>) -> ()) {
+                           withBehavior additionalBehavior: RequestBehavior = EmptyRequestBehavior(),
+                           completion: @escaping (Result<A>) -> ()) {
         
-        let behavior = CompositeRequestBehavior(behaviors: [ self.behavior, additionalBehavior ])
+        let behavior = self.behavior.adding(additionalBehavior)
         let headers = self.defaultHeaders?.headers() ?? []
         
-        let plannedRequest = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: headers)
+        guard let plannedRequest = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: headers, requestBehaviour: behavior) else {
+            DispatchQueue.main.async {
+                completion(.error(NAError<NetworkError>(type: .malformedURLProvided)))
+            }
+            return
+        }
         
         BaseLog.network.log(.trace, plannedRequest)
         
         let request = behavior.modify(planned: plannedRequest) 
-            
+        
         if request != plannedRequest {
             BaseLog.network.log(.trace, request)
         }
@@ -160,23 +165,20 @@ public final class Webservice {
 }
 
 fileprivate extension Resource {
-    func url(for baseURL: URL) -> URL {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = baseURL.scheme!
-        urlComponents.host = baseURL.host
-        urlComponents.port = baseURL.port
-        urlComponents.path = baseURL.path.appending(self.endpoint)
-        
-        if let query = self.query, !query.isEmpty {
-            urlComponents.queryItems = query
-        }
-        
-        return urlComponents.url!
+    func urlComponents(for baseURL: URL) -> URLComponents {
+        return URLComponents()
+            .transformer()
+            .modifying(scheme: baseURL.scheme)
+            .modifying(host: baseURL.host)
+            .modifying(port: baseURL.port)
+            .modifying(path: baseURL.path)
+            .replacing(queryItems: self.query)
+            .components()
     }
 }
 
 fileprivate extension HttpMethod {
- 
+    
     func map<B>(f: (Body) -> B) -> HttpMethod<B> {
         switch self {
         case .get(let body):
@@ -240,8 +242,13 @@ fileprivate extension CancellationPolicy {
 }
 
 fileprivate extension URLRequest {
-    init<A>(resource: Resource<A>, baseURL: URL, additionalHeaders: [(String, String)]) {
-        self.init(url: resource.url(for: baseURL))
+    init?<A>(resource: Resource<A>, baseURL: URL, additionalHeaders: [(String, String)], requestBehaviour: RequestBehavior) {
+        
+        guard let url = requestBehaviour.modify(urlComponents: resource.urlComponents(for: baseURL)).url else {
+            return nil
+        }
+        
+        self.init(url: url)
         
         let method = resource.method.map { input -> Data in
             if input is Data {

@@ -9,6 +9,7 @@
 import Foundation
 
 public protocol RequestBehavior {
+    func modify(urlComponents: URLComponents) -> URLComponents
     func modify(planned request: URLRequest) -> URLRequest
     func before(sending request: URLRequest)
     
@@ -17,26 +18,31 @@ public protocol RequestBehavior {
 }
 
 public extension RequestBehavior {
+    func modify(urlComponents: URLComponents) -> URLComponents { return urlComponents }
     func modify(planned request: URLRequest) -> URLRequest { return request }
     func before(sending: URLRequest) { }
     
     func after(completion: URLResponse?) { }
     func after(failure: Error?, retry: () -> Void) { }
+    
+    func adding(_ behavior: RequestBehavior) -> RequestBehavior {
+        return CompositeRequestBehavior(behaviors: [self,behavior])
+    }
 }
 
 public struct EmptyRequestBehavior: RequestBehavior {
     public init() {}
 }
 
-public struct CompositeRequestBehavior: RequestBehavior {
+private struct CompositeRequestBehavior: RequestBehavior {
     
     let behaviors: [RequestBehavior]
     
-    public init(behaviors: [RequestBehavior]) {
+    init(behaviors: [RequestBehavior]) {
         self.behaviors = behaviors
     }
     
-    public func modify(planned r: URLRequest) -> URLRequest {
+    func modify(planned r: URLRequest) -> URLRequest {
         var request = r
         
         behaviors.forEach({ request = $0.modify(planned: request) })
@@ -44,15 +50,15 @@ public struct CompositeRequestBehavior: RequestBehavior {
         return request
     }
     
-    public func before(sending request: URLRequest) {
+    func before(sending request: URLRequest) {
         behaviors.forEach({ $0.before(sending: request) })
     }
     
-    public func after(completion response: URLResponse?) {
+    func after(completion response: URLResponse?) {
         behaviors.forEach({ $0.after(completion: response) })
     }
     
-    public func after(failure: Error?, retry: () -> Void) {
+    func after(failure: Error?, retry: () -> Void) {
         behaviors.forEach({ $0.after(failure: failure, retry: retry) })
     }
 }

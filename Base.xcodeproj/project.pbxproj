@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		87802F95203B412500A0BC85 /* NetworkTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87802F94203B412500A0BC85 /* NetworkTransformers.swift */; };
 		B06A5D121E438FB200DAFF6B /* Log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D111E438FB200DAFF6B /* Log.framework */; };
 		B06A5D1F1E43914C00DAFF6B /* Datastore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D151E43914C00DAFF6B /* Datastore.swift */; };
 		B06A5D201E43914C00DAFF6B /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D161E43914C00DAFF6B /* Errors.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		87802F94203B412500A0BC85 /* NetworkTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTransformers.swift; sourceTree = "<group>"; };
 		B06A5D031E4386AC00DAFF6B /* Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B06A5D071E4386AC00DAFF6B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B06A5D0F1E4389EF00DAFF6B /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				B06A5D1E1E43914C00DAFF6B /* WebService.swift */,
 				B06A5D181E43914C00DAFF6B /* HeaderProvider.swift */,
 				B06A5D1A1E43914C00DAFF6B /* Pagination.swift */,
+				87802F94203B412500A0BC85 /* NetworkTransformers.swift */,
 			);
 			name = Remote;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				B06A5D261E43914C00DAFF6B /* Resource.swift in Sources */,
 				B06A5D341E43944C00DAFF6B /* BaseLog.swift in Sources */,
 				B06A5D201E43914C00DAFF6B /* Errors.swift in Sources */,
+				87802F95203B412500A0BC85 /* NetworkTransformers.swift in Sources */,
 				B092983E1FCF18C500F6D9DF /* TestSystem.swift in Sources */,
 				B06A5D1F1E43914C00DAFF6B /* Datastore.swift in Sources */,
 				B06A5D251E43914C00DAFF6B /* RequestBehavior.swift in Sources */,
