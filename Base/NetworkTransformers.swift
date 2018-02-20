@@ -94,11 +94,11 @@ final class URLRequestTransformer {
         return storedRequest
     }
     
-    func appending(headers: [(String , String)]) -> URLRequestTransformer {
+    func appending(headers: [(String, String)]) -> URLRequestTransformer {
         
         var request = storedRequest
         
-        headers.forEach { (header,value) in
+        headers.forEach { header, value in
             request.addValue(value, forHTTPHeaderField: header)
         }
         

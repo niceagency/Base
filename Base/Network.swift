@@ -45,12 +45,12 @@ public struct Network {
         public static private(set) var isReachable = false
         
         public static func beginSharedReachabilityMonitoring() {
-            let _ = shared
+            _ = shared
         }
     }
     
     public struct Webservices {
-        private static var webservices: [String : Webservice] = [:]
+        private static var webservices: [String: Webservice] = [:]
         
         @discardableResult public static func add(baseURLs: [String]) -> [Webservice] {
             var services: [Webservice] = []
@@ -65,9 +65,15 @@ public struct Network {
             return services
         }
         
-        @discardableResult public static func add(baseURL: String, authorizationHandler: UnauthorizedResponseHandler? = nil, defaultHeaders: HeaderProvider? = nil, session: URLSession = URLSession.shared) -> Webservice {
+        @discardableResult public static func add(baseURL: String,
+                                                  authorizationHandler: UnauthorizedResponseHandler? = nil,
+                                                  defaultHeaders: HeaderProvider? = nil,
+                                                  session: URLSession = URLSession.shared) -> Webservice {
             
-            let webservice = Webservice(baseURL: URL(string: baseURL)!, unauthorizedResponseHandler: authorizationHandler, defaultHeaders: defaultHeaders, session: session)
+            let webservice = Webservice(baseURL: URL(string: baseURL)!,
+                                        unauthorizedResponseHandler: authorizationHandler,
+                                        defaultHeaders: defaultHeaders,
+                                        session: session)
             
             webservices[baseURL] = webservice
             

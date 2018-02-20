@@ -12,14 +12,17 @@ import CoreData
 
 public final class Datastore {
     
-    //MARK: Core Data
+    // MARK: Core Data
     
     public func newEditingContext(autoSaveParent: Bool = false) -> NSManagedObjectContext {
         let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         moc.parent = self.viewContext
         
         if autoSaveParent {
-            NotificationCenter.default.addObserver(self, selector: #selector(mocDidSave), name: NSNotification.Name.NSManagedObjectContextDidSave, object: moc)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(mocDidSave),
+                                                   name: NSNotification.Name.NSManagedObjectContextDidSave,
+                                                   object: moc)
         }
         
         return moc
@@ -107,4 +110,3 @@ public final class Datastore {
         self.viewContext = moc
     }
 }
-

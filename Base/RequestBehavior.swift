@@ -26,7 +26,7 @@ public extension RequestBehavior {
     func after(failure: Error?, retry: () -> Void) { }
     
     func adding(_ behavior: RequestBehavior) -> RequestBehavior {
-        return CompositeRequestBehavior(behaviors: [self,behavior])
+        return CompositeRequestBehavior(behaviors: [self, behavior])
     }
 }
 
@@ -42,23 +42,31 @@ private struct CompositeRequestBehavior: RequestBehavior {
         self.behaviors = behaviors
     }
     
-    func modify(planned r: URLRequest) -> URLRequest {
-        var request = r
+    func modify(planned request: URLRequest) -> URLRequest {
+        var request = request
         
-        behaviors.forEach({ request = $0.modify(planned: request) })
+        behaviors.forEach {
+            request = $0.modify(planned: request)
+        }
         
         return request
     }
     
     func before(sending request: URLRequest) {
-        behaviors.forEach({ $0.before(sending: request) })
+        behaviors.forEach {
+            $0.before(sending: request)
+        }
     }
     
     func after(completion response: URLResponse?) {
-        behaviors.forEach({ $0.after(completion: response) })
+        behaviors.forEach {
+            $0.after(completion: response)
+        }
     }
     
     func after(failure: Error?, retry: () -> Void) {
-        behaviors.forEach({ $0.after(failure: failure, retry: retry) })
+        behaviors.forEach {
+            $0.after(failure: failure, retry: retry)
+        }
     }
 }

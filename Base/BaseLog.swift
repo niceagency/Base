@@ -15,7 +15,7 @@ public enum BaseDomain: Int, LogDomain {
     case testSupport = 2
     
     public var description: String {
-        switch(self) {
+        switch self {
         case .network:
             return "Network"
         case .coreData:
@@ -29,12 +29,12 @@ public enum BaseDomain: Int, LogDomain {
 public enum BaseLevel: Int, LogLevel {
     case trace = 4
     case debug = 3
-    case warn =  2
+    case warn = 2
     case error = 1
-    case none =  0
+    case none = 0
     
     public var description: String {
-        switch(self) {
+        switch self {
         case .trace:
             return "Trace"
         case .debug:
@@ -57,7 +57,10 @@ public extension BaseDomain {
         (domain: .testSupport, level: .none, logger: nil)
         ])
     
-    public func log<T>(_ level: BaseLevel, _ object: T, filename: String = #file, line: Int = #line, funcname: String = #function) {
+    public func log<T>(_ level: BaseLevel, _ object: T,
+                       filename: String = #file,
+                       line: Int = #line,
+                       funcname: String = #function) {
         let logger = BaseDomain.logStore.log(self)
         
         logger.log(level, object, filename: filename, line: line, funcname: funcname)

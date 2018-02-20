@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		87802F95203B412500A0BC85 /* NetworkTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87802F94203B412500A0BC85 /* NetworkTransformers.swift */; };
+		87802F98203C3E4A00A0BC85 /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87802F97203C3E4A00A0BC85 /* TestConstants.swift */; };
 		B06A5D121E438FB200DAFF6B /* Log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D111E438FB200DAFF6B /* Log.framework */; };
 		B06A5D1F1E43914C00DAFF6B /* Datastore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D151E43914C00DAFF6B /* Datastore.swift */; };
 		B06A5D201E43914C00DAFF6B /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D161E43914C00DAFF6B /* Errors.swift */; };
@@ -29,6 +30,7 @@
 
 /* Begin PBXFileReference section */
 		87802F94203B412500A0BC85 /* NetworkTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTransformers.swift; sourceTree = "<group>"; };
+		87802F97203C3E4A00A0BC85 /* TestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
 		B06A5D031E4386AC00DAFF6B /* Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B06A5D071E4386AC00DAFF6B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B06A5D0F1E4389EF00DAFF6B /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
@@ -195,6 +197,7 @@
 				B092983D1FCF18C500F6D9DF /* TestSystem.swift */,
 				B092983B1FCF16FE00F6D9DF /* TestableDate.swift */,
 				B092983F1FD57ABA00F6D9DF /* TestURLSession.swift */,
+				87802F97203C3E4A00A0BC85 /* TestConstants.swift */,
 			);
 			name = TestSupport;
 			sourceTree = "<group>";
@@ -236,6 +239,7 @@
 				B06A5CFF1E4386AC00DAFF6B /* Frameworks */,
 				B06A5D001E4386AC00DAFF6B /* Headers */,
 				B06A5D011E4386AC00DAFF6B /* Resources */,
+				87802F96203C345900A0BC85 /* TEMP SWIFT LINT DELETE */,
 			);
 			buildRules = (
 			);
@@ -289,6 +293,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		87802F96203C345900A0BC85 /* TEMP SWIFT LINT DELETE */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "TEMP SWIFT LINT DELETE";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B06A5CFE1E4386AC00DAFF6B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -302,6 +323,7 @@
 				B092983E1FCF18C500F6D9DF /* TestSystem.swift in Sources */,
 				B06A5D1F1E43914C00DAFF6B /* Datastore.swift in Sources */,
 				B06A5D251E43914C00DAFF6B /* RequestBehavior.swift in Sources */,
+				87802F98203C3E4A00A0BC85 /* TestConstants.swift in Sources */,
 				B09298401FD57ABA00F6D9DF /* TestURLSession.swift in Sources */,
 				B06A5D241E43914C00DAFF6B /* Pagination.swift in Sources */,
 				B092983C1FCF16FE00F6D9DF /* TestableDate.swift in Sources */,

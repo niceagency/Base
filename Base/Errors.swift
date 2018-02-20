@@ -66,7 +66,7 @@ public enum NetworkError: ErrorType {
             return status
         case .authenticationError:
             return 401
-        case .noConnection(let (code,_)):
+        case .noConnection(let (code, _)):
             return code
         case .malformedURLProvided:
             return 13003
@@ -88,6 +88,6 @@ public enum NetworkError: ErrorType {
     
     case httpError(Int)
     case authenticationError
-    case noConnection(Int,String)
+    case noConnection(Int, String)
     case malformedURLProvided
 }
