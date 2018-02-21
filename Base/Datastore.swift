@@ -7,106 +7,120 @@
 //
 
 import Foundation
-
 import CoreData
 
-public final class Datastore {
-    
-    // MARK: Core Data
-    
-    public func newEditingContext(autoSaveParent: Bool = false) -> NSManagedObjectContext {
-        let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        moc.parent = self.viewContext
+public enum ContextSavePolicy {
+    case none
+    case autoSaveToParent(owner: Datastore)
+}
+
+public extension NSManagedObjectContext {
+    public func backgroundChildContext(savePolicy: ContextSavePolicy = .none) -> NSManagedObjectContext {
         
-        if autoSaveParent {
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(mocDidSave),
-                                                   name: NSNotification.Name.NSManagedObjectContextDidSave,
-                                                   object: moc)
+        let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        moc.parent = self
+        
+        if case let .autoSaveToParent(datastore) = savePolicy {
+            datastore.forwardSaveToParentContexts.append(Weak(moc))
         }
         
         return moc
     }
+}
+
+public final class Datastore {
     
-    public func viewManagedObjectContext() -> NSManagedObjectContext {
-        return self.viewContext
+    // MARK: Core Data
+    fileprivate var forwardSaveToParentContexts = [Weak<NSManagedObjectContext>]()
+    
+    private let persistentContainer: NSPersistentContainer
+    
+    public var viewContext: NSManagedObjectContext {
+        return persistentContainer.viewContext
     }
     
-    private var viewContext: NSManagedObjectContext
+    public class var documentsDirectory: URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
+
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        return persistentContainer.newBackgroundContext()
+    }
     
-    public init(withModelURL modelURL: URL, documentURL: URL?, autoMigrate: Bool = false, isReady: (() -> Void)? = nil) {
-        guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
-            fatalError("Error initializing mom from: \(modelURL)")
+    public init(modelName: String,
+                storePathDirectory: URL? = Datastore.documentsDirectory,
+                manualMigration: Bool = false,
+                isReady: (() -> Void)? = nil) {
+        
+        let persistentContainer = NSPersistentContainer(name: modelName)
+        
+        let description: NSPersistentStoreDescription
+        
+        if var storePathDirectory = storePathDirectory {
+            storePathDirectory.appendPathComponent("\(modelName).sqlite")
+            description = NSPersistentStoreDescription(url: storePathDirectory)
+            description.shouldInferMappingModelAutomatically = !manualMigration
+            description.shouldMigrateStoreAutomatically = !manualMigration
+        } else {
+            description = NSPersistentStoreDescription()
+            description.type = NSInMemoryStoreType
         }
         
-        let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
-        
-        viewContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        viewContext.persistentStoreCoordinator = psc
-        
-        DispatchQueue.global(qos: .userInteractive).async {
+        persistentContainer.persistentStoreDescriptions = [description]
+        persistentContainer.loadPersistentStores { storeDescription, error in
             
-            if let documentURL = documentURL {
-                
-                BaseLog.coreData.log(.trace, "Adding store at \(documentURL)")
-                
-                do {
-                    try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: nil)
-                } catch {
-                    BaseLog.coreData.log(.error, "Error trying to load the store: \(error)\nDeleting and starting fresh...")
-                    
-                    if autoMigrate {
-                        do {
-                            try FileManager.default.removeItem(at: documentURL)
-                            try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: nil)
-                        } catch {
-                            fatalError("Error migrating store: \(error)")
-                        }
-                    } else {
-                        fatalError("Error adding persistent store: \(error)")
-                    }
-                }
-                
-                BaseLog.coreData.log(.trace, "Added store")
-
-            } else {
-                
-                BaseLog.coreData.log(.trace, "Creating in-memory store")
-                
-                do {
-                    try psc.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: documentURL, options: nil)
-                } catch {
-                    fatalError("Error adding persistent store: \(error)")
-                }
+            persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
+            
+            BaseLog.coreData.log(.trace, "Loaded persistent store: \(storeDescription)")
+            
+            if let error = error {
+                fatalError("Failed to load persistent stores \(error)")
             }
             
             if let completion = isReady {
-                DispatchQueue.main.async {
-                    completion()
-                }
+                completion()
             }
         }
+        
+        self.persistentContainer = persistentContainer
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(mocDidSave),
+                                               name: NSNotification.Name.NSManagedObjectContextDidSave,
+                                               object: nil)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
     
-    @objc private func mocDidSave(note: Notification) {
-        if let moc = note.object as? NSManagedObjectContext, moc != viewContext {
-            viewContext.perform({
+    @objc fileprivate func mocDidSave(note: Notification) {
+        
+        guard let moc = note.object as? NSManagedObjectContext else {
+            return
+        }
+        
+        if let userInfo = note.userInfo {
+                
+            if let updatedObjects = userInfo[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+                for object in updatedObjects {
+                    BaseLog.coreData.log(.trace, "Refreshing \(object) on context: \(moc)")
+                    moc.refresh(object, mergeChanges: false)
+                }
+            }
+        }
+        
+        if forwardSaveToParentContexts.contains(moc),
+            let parent = moc.parent {
+            parent.perform {
                 BaseLog.coreData.log(.trace, "Data loading context saved")
                 
                 do {
-                    try self.viewContext.save()
+                    try parent.save()
                 } catch {
                     BaseLog.coreData.log(.error, "Error trying to save the store: \(error)")
                 }
-            })
+            }
         }
-    }
-    
-    func injectTestContext(moc: NSManagedObjectContext) {
-        self.viewContext = moc
     }
 }

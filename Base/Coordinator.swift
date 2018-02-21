@@ -14,7 +14,7 @@ open class Coordinator {
     private weak var parent: Coordinator?
     
     private var childCoordinators: [Coordinator] = []
-    private var childViewControllers: [WeakViewController] = [] 
+    private var childViewControllers: [Weak<UIViewController>] = []
     
     public convenience init() {
         self.init(navigationController: UINavigationController())
@@ -37,7 +37,7 @@ open class Coordinator {
     open func pushChild(viewController: UIViewController, animated: Bool) {
         navigationController.pushViewController(viewController, animated: animated)
         
-        childViewControllers.append(WeakViewController(viewController: viewController))
+        childViewControllers.append(Weak(viewController))
         
         destroyCompleteChildren()
     }
@@ -45,13 +45,13 @@ open class Coordinator {
     open func present(viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
         navigationController.present(viewController, animated: animated, completion: completion)
         
-        childViewControllers.append(WeakViewController(viewController: viewController))
+        childViewControllers.append(Weak(viewController))
         
         destroyCompleteChildren()
     }
     
     open func noteDidReturn(child: UIViewController) {
-        childViewControllers.append(WeakViewController(viewController: child))
+        childViewControllers.append(Weak(child))
         
         destroyCompleteChildren()
     }
@@ -65,9 +65,7 @@ open class Coordinator {
     open func selfDestructIfPossible() {
         destroyCompleteChildren()
         
-        if !childViewControllers.contains(where: { $0.isValid }) {
-            guard childCoordinators.isEmpty else { return }
-            
+        if childViewControllers.flatMap({ $0.value }).isEmpty {
             notifyCompletion()
         }
     }
@@ -96,17 +94,5 @@ open class Coordinator {
     
     open func didComplete(child: Coordinator) {
         remove(child: child)
-    }
-}
-
-private final class WeakViewController {
-    private weak var proxy: UIViewController?
-    
-    init(viewController: UIViewController) {
-        proxy = viewController
-    }
-    
-    var isValid: Bool {
-        return proxy != nil
     }
 }

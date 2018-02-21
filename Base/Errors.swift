@@ -8,11 +8,6 @@
 
 import Foundation
 
-public enum Result<T> {
-    case success(T)
-    case error(Error)
-}
-
 public protocol ErrorType {
     var domain: String { get }
     var description: String { get }

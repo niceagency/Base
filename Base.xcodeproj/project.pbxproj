@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		875D0C89203F16F600B57A89 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 875D0C88203F16F600B57A89 /* Types.swift */; };
 		87802F95203B412500A0BC85 /* NetworkTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87802F94203B412500A0BC85 /* NetworkTransformers.swift */; };
 		87802F98203C3E4A00A0BC85 /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87802F97203C3E4A00A0BC85 /* TestConstants.swift */; };
 		B06A5D121E438FB200DAFF6B /* Log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D111E438FB200DAFF6B /* Log.framework */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		875D0C88203F16F600B57A89 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		87802F94203B412500A0BC85 /* NetworkTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTransformers.swift; sourceTree = "<group>"; };
 		87802F97203C3E4A00A0BC85 /* TestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
 		B06A5D031E4386AC00DAFF6B /* Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +121,7 @@
 		B06A5D291E43915900DAFF6B /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				875D0C88203F16F600B57A89 /* Types.swift */,
 				B06A5D161E43914C00DAFF6B /* Errors.swift */,
 				B06A5D331E43944C00DAFF6B /* BaseLog.swift */,
 				B06A5D2B1E4391CD00DAFF6B /* Remote */,
@@ -330,6 +333,7 @@
 				B06A5D271E43914C00DAFF6B /* UIRequestBehavior.swift in Sources */,
 				B0FF57171FA0EC9B0078F1B2 /* Coordinator.swift in Sources */,
 				B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */,
+				875D0C89203F16F600B57A89 /* Types.swift in Sources */,
 				B0FF57141FA0D9B80078F1B2 /* UIView+AutoLayout.swift in Sources */,
 				B06A5D221E43914C00DAFF6B /* HeaderProvider.swift in Sources */,
 			);
@@ -465,7 +469,7 @@
 				);
 				INFOPLIST_FILE = Base/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = agency.nice.Base;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -491,7 +495,7 @@
 				);
 				INFOPLIST_FILE = Base/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = agency.nice.Base;
 				PRODUCT_NAME = "$(TARGET_NAME)";
