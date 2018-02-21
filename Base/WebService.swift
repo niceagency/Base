@@ -19,17 +19,19 @@ struct DataTaskCallback<A> {
     var unauthorizedResponseHandler: UnauthorizedResponseHandler?
 }
 
+extension NSError {
+    fileprivate func isCancelledError() -> Bool {
+        return self.domain == NSURLErrorDomain && self.code == NSURLErrorCancelled
+    }
+    
+    fileprivate func isNoConnectivityError() -> Bool {
+        return self.domain == NSURLErrorDomain && self.code == NSURLErrorNotConnectedToInternet
+    }
+}
+
 extension URLSession {
     
-    private func isCancelledError(_ error: NSError) -> Bool {
-        return error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled
-    }
-    
-    private func isNoConnectivityError(_ error: NSError) -> Bool {
-        return error.domain == NSURLErrorDomain && error.code == NSURLErrorNotConnectedToInternet
-    }
-    
-    fileprivate func handleErrorFor<A>(
+    private func handleErrorFor<A>(
         data: Data?,
         request: URLRequest,
         response: HTTPURLResponse,
@@ -65,11 +67,11 @@ extension URLSession {
             BaseLog.network.log(.trace, "done")
             
             if let error = error as NSError? {
-                if self.isCancelledError(error) {
+                if error.isCancelledError() {
                     return
                 }
                 
-                if self.isNoConnectivityError(error) {
+                if error.isNoConnectivityError() {
                     let failingURL = error.userInfo[NSURLErrorFailingURLStringErrorKey] ?? "Unknown URL"
                     BaseLog.network.log(.trace, "No connectivity available for request: \(failingURL)")
                     callbacks.failure(NAError(type: NetworkError.noConnection(error.code, "\(failingURL)")))
@@ -135,17 +137,17 @@ public final class Webservice {
     }
     
     public func request<A>(_ resource: Resource<A>,
-                           withBehavior additionalBehavior: RequestBehavior = EmptyRequestBehavior(),
+                           withBehavior additionalBehavior: RequestBehavior? = nil,
                            completion: @escaping (Result<A>) -> Void) {
         
-        let behavior = self.behavior.adding(additionalBehavior)
+        let behavior = self.behavior.adding(additionalBehavior ?? EmptyRequestBehavior())
         let headers = self.defaultHeaders?.headers() ?? []
         
-        guard let plannedRequest = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: headers,
+        guard let plannedRequest = URLRequest(resource: resource,
+                                              baseURL: self.baseURL,
+                                              additionalHeaders: headers,
                                               requestBehaviour: behavior) else {
-                                                DispatchQueue.main.async {
-                                                    completion(.error(NAError<NetworkError>(type: .malformedURLProvided)))
-                                                }
+                                                DispatchQueue.main.async { completion(.error(NAError<NetworkError>(type: .malformedURL))) }
                                                 return
         }
         
@@ -153,9 +155,7 @@ public final class Webservice {
         
         let request = behavior.modify(planned: plannedRequest) 
         
-        if request != plannedRequest {
-            BaseLog.network.log(.trace, request)
-        }
+        if request != plannedRequest { BaseLog.network.log(.trace, request) }
         
         let session = self.session
         let cancel = resource.cancellationPolicy
@@ -174,9 +174,7 @@ public final class Webservice {
         
         behavior.before(sending: request)
         
-        let retry = {
-            self.request(resource, withBehavior: behavior, completion: completion)
-        }
+        let retry = { self.request(resource, withBehavior: behavior, completion: completion) }
         
         let success: ((URLResponse?, A) -> Void) = { response, result in
             DispatchQueue.main.async {
@@ -192,7 +190,8 @@ public final class Webservice {
             }
         }
         
-        let task = session.resourceDataTask(request: request, resource: resource,
+        let task = session.resourceDataTask(request: request,
+                                            resource: resource,
                                             behavior: behavior,
                                             callbacks: DataTaskCallback(success: success,
                                                                         failure: failure,

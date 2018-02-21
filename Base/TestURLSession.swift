@@ -45,7 +45,7 @@ public struct TestURLSessionConfiguration {
         guard let jsonObject = try? JSONSerialization.jsonObject(with: json.data(using: .utf8)!,
                                                                  options: []),
             let representation = jsonObject as? [[String: [String: Any]]] else {
-            fatalError("Unable to serialize JSON object from \(json)")
+                fatalError("Unable to serialize JSON object from \(json)")
         }
         
         var config: [URLMatch: URLResponseStub] = [:]
@@ -249,8 +249,14 @@ private extension HttpMethod {
 
 extension URLMatch: EnvironmentRepresentable {
     init(environmentRepresentation rep: [String: Any]) {
-        host = (rep["host"] as? String) ?? ""
-        path = (rep["path"] as? String) ?? ""
+        
+        guard let host = rep["host"] as? String,
+            let path = rep["path"] as? String else {
+                fatalError("Environment representation invalid: \(rep)")
+        }
+        
+        self.host = host
+        self.path = path
         method = HttpMethod.from(methodName: (rep["method"] as? String) ?? "")
         let items = rep["query"] as? [[String]]
         
@@ -274,9 +280,15 @@ extension URLMatch: EnvironmentRepresentable {
 
 extension URLResponseStub: EnvironmentRepresentable {
     init(environmentRepresentation rep: [String: Any]) {
-        statusCode = (rep["statusCode"] as? Int) ?? -1
-        headers = rep["headers"] as? [String: String]
-        payloadFileName = rep["payloadFileName"] as? String
+        guard let statusCode = rep["statusCode"] as? Int,
+            let headers = rep["headers"] as? [String: String],
+            let payloadFileName = rep["payloadFileName"] as? String else {
+                fatalError("Environment representation invalid: \(rep)")
+        }
+        
+        self.statusCode = statusCode
+        self.headers = headers
+        self.payloadFileName = payloadFileName
     }
     
     func environmentRepresentation() -> [String: Any] {

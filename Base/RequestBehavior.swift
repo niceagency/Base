@@ -30,8 +30,8 @@ public extension RequestBehavior {
     }
 }
 
-public struct EmptyRequestBehavior: RequestBehavior {
-    public init() {}
+struct EmptyRequestBehavior: RequestBehavior {
+    init() {}
 }
 
 private struct CompositeRequestBehavior: RequestBehavior {

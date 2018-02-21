@@ -8,93 +8,89 @@
 
 import Foundation
 
-extension URLComponents {
+public extension URLComponents {
     func transformer() -> URLComponentsTransformer {
         return URLComponentsTransformer(self)
     }
 }
 
-extension URLRequest {
+public extension URLRequest {
     func transformer() -> URLRequestTransformer {
         return URLRequestTransformer(self)
     }
 }
 
-enum URLComponentsTransformerError: Error {
-    case badComponents
-}
-
-final class URLComponentsTransformer {
+public final class URLComponentsTransformer {
     private var storedURLComponents: URLComponents
     
-    init(_ urlComponents: URLComponents) {
+    public init(_ urlComponents: URLComponents) {
         self.storedURLComponents = urlComponents
     }
     
-    func request() throws -> URLRequest {
+    public func request() throws -> URLRequest {
         guard let url = storedURLComponents.url else {
-            throw URLComponentsTransformerError.badComponents
+            throw NAError<URLComponentsTransformerError>(type: .badComponents)
         }
         
         return URLRequest(url: url)
     }
     
-    func requestTransformer() throws -> URLRequestTransformer {
-        guard let requestTransformer = try? requestTransformer() else {
-            throw URLComponentsTransformerError.badComponents
+    public func requestTransformer() throws -> URLRequestTransformer {
+        guard let request = try? request() else {
+            throw NAError<URLComponentsTransformerError>(type: .badComponents)
         }
         
-        return requestTransformer
+        return request.transformer()
     }
     
-    func components() -> URLComponents {
+    public func components() -> URLComponents {
         return storedURLComponents
     }
     
-    func replacing(queryItems: [URLQueryItem]?) -> URLComponentsTransformer {
+    public func replacing(queryItems: [URLQueryItem]?) -> URLComponentsTransformer {
         storedURLComponents.queryItems = queryItems
         return self
     }
     
-    func appending(queryItems: [URLQueryItem]) -> URLComponentsTransformer {
+    public func appending(queryItems: [URLQueryItem]) -> URLComponentsTransformer {
         let existingQueryItems = storedURLComponents.queryItems ?? []
         storedURLComponents.queryItems = existingQueryItems + queryItems
         return self
     }
     
-    func modifying(scheme: String?) -> URLComponentsTransformer {
+    public func modifying(scheme: String?) -> URLComponentsTransformer {
         storedURLComponents.scheme = scheme
         return self
     }
     
-    func modifying(port: Int?) -> URLComponentsTransformer {
+    public func modifying(port: Int?) -> URLComponentsTransformer {
         storedURLComponents.port = port
         return self
     }
     
-    func modifying(path: String) -> URLComponentsTransformer {
+    public func modifying(path: String) -> URLComponentsTransformer {
         storedURLComponents.path = path
         return self
     }
     
-    func modifying(host: String?) -> URLComponentsTransformer {
+    public func modifying(host: String?) -> URLComponentsTransformer {
         storedURLComponents.host = host
         return self
     }
 }
 
-final class URLRequestTransformer {
+public final class URLRequestTransformer {
     private var storedRequest: URLRequest
     
-    init(_ request: URLRequest) {
+    public init(_ request: URLRequest) {
         self.storedRequest = request
     }
     
-    func request() -> URLRequest {
+    public func request() -> URLRequest {
         return storedRequest
     }
     
-    func appending(headers: [(String, String)]) -> URLRequestTransformer {
+    public func appending(headers: [(String, String)]) -> URLRequestTransformer {
         
         var request = storedRequest
         
@@ -107,7 +103,7 @@ final class URLRequestTransformer {
         return self
     }
     
-    func modifying(cachePolicy: NSURLRequest.CachePolicy) -> URLRequestTransformer {
+    public func modifying(cachePolicy: NSURLRequest.CachePolicy) -> URLRequestTransformer {
         var request = storedRequest
         request.cachePolicy = cachePolicy
         

@@ -239,7 +239,7 @@
 				B06A5CFF1E4386AC00DAFF6B /* Frameworks */,
 				B06A5D001E4386AC00DAFF6B /* Headers */,
 				B06A5D011E4386AC00DAFF6B /* Resources */,
-				87802F96203C345900A0BC85 /* TEMP SWIFT LINT DELETE */,
+				87802F96203C345900A0BC85 /* Swift Lint */,
 			);
 			buildRules = (
 			);
@@ -294,19 +294,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		87802F96203C345900A0BC85 /* TEMP SWIFT LINT DELETE */ = {
+		87802F96203C345900A0BC85 /* Swift Lint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "TEMP SWIFT LINT DELETE";
+			name = "Swift Lint";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = "if [[ ${CONFIGURATION} == \"Debug\" ]]; then\n    if which swiftlint >/dev/null; then\n        swiftlint\n    else\n        echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\n    fi\nelse\n    echo \"Debug doesn't match ${CONFIGURATION}\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -57,7 +57,8 @@ public extension BaseDomain {
         (domain: .testSupport, level: .none, logger: nil)
         ])
     
-    public func log<T>(_ level: BaseLevel, _ object: T,
+    public func log<T>(_ level: BaseLevel,
+                       _ object: T,
                        filename: String = #file,
                        line: Int = #line,
                        funcname: String = #function) {
