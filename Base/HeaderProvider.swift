@@ -45,26 +45,20 @@ public class SimpleHeaderProvider: CompositeHeaderProvider {
 public struct HTTPHeaders {
     
     public static var jsonContent: HeaderProvider {
-        get {
-            return SimpleHeaderProvider() {
-                return [("Content-Type", "application/json; charset=utf-8")]
-            }
+        return SimpleHeaderProvider {
+            return [("Content-Type", "application/json; charset=utf-8")]
         }
     }
     
     public static var formContent: HeaderProvider {
-        get {
-            return SimpleHeaderProvider() {
-                return [("Content-Type", "application/x-www-form-urlencoded")]
-            }
+        return SimpleHeaderProvider {
+            return [("Content-Type", "application/x-www-form-urlencoded")]
         }
     }
     
     public static var plainTextContent: HeaderProvider {
-        get {
-            return SimpleHeaderProvider() {
-                return [("Content-Type", "plain/text")]
-            }
+        return SimpleHeaderProvider {
+            return [("Content-Type", "plain/text")]
         }
     }
 }

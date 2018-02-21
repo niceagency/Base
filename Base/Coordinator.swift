@@ -24,38 +24,39 @@ open class Coordinator {
         self.navigationController = navigationController
     }
     
-    //MARK:
+    // MARK: 
     
-    @discardableResult public func setNavigationController(delegate: UINavigationControllerDelegate, overwrite: Bool) -> Bool {
+    @discardableResult public func setNavigationController(delegate: UINavigationControllerDelegate,
+                                                           overwrite: Bool) -> Bool {
         guard navigationController.delegate == nil || overwrite else { return false }
         
         navigationController.delegate = delegate
         return true
     }
     
-    open func pushChild(viewController vc: UIViewController, animated: Bool) {
-        navigationController.pushViewController(vc, animated: animated)
+    open func pushChild(viewController: UIViewController, animated: Bool) {
+        navigationController.pushViewController(viewController, animated: animated)
         
-        childViewControllers.append(WeakViewController(vc: vc))
-        
-        destroyCompleteChildren()
-    }
-    
-    open func present(viewController vc: UIViewController, animated: Bool, completion: (() -> Void)?) {
-        navigationController.present(vc, animated: animated, completion: completion)
-        
-        childViewControllers.append(WeakViewController(vc: vc))
+        childViewControllers.append(WeakViewController(viewController: viewController))
         
         destroyCompleteChildren()
     }
     
-    open func noteDidReturn(child vc: UIViewController) {
-        childViewControllers.append(WeakViewController(vc: vc))
+    open func present(viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
+        navigationController.present(viewController, animated: animated, completion: completion)
+        
+        childViewControllers.append(WeakViewController(viewController: viewController))
         
         destroyCompleteChildren()
     }
     
-    //MARK:
+    open func noteDidReturn(child: UIViewController) {
+        childViewControllers.append(WeakViewController(viewController: child))
+        
+        destroyCompleteChildren()
+    }
+    
+    // MARK: 
     
     open func destroyCompleteChildren() {
         childCoordinators.forEach({ $0.selfDestructIfPossible() })
@@ -71,12 +72,11 @@ open class Coordinator {
         }
     }
     
-    //MARK:
+    // MARK: 
     
     open func add(child: Coordinator) {
         child.parent = self
         childCoordinators.append(child)
-        
        
     }
     
@@ -88,7 +88,7 @@ open class Coordinator {
         selfDestructIfPossible()
     }
     
-    //MARK:
+    // MARK: 
     
     open func notifyCompletion() {
         parent?.didComplete(child: self)
@@ -102,8 +102,8 @@ open class Coordinator {
 private final class WeakViewController {
     private weak var proxy: UIViewController?
     
-    init(vc: UIViewController) {
-        proxy = vc
+    init(viewController: UIViewController) {
+        proxy = viewController
     }
     
     var isValid: Bool {

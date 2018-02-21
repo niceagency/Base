@@ -11,14 +11,10 @@ import Foundation
 public protocol PaginatedContent {
     associatedtype ResourceItemType
     
-    var  contents: ResourceItemType? {get}
+    var  contents: ResourceItemType? { get }
     
     init(data: Data, contents: ResourceItemType?)
 }
-
-
-
-
 
 /**
 Example of how pagination might be used as a wrapper around a resource

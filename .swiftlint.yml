@@ -1,0 +1,26 @@
+disabled_rules: # rule identifiers to exclude from running
+  - trailing_whitespace
+excluded: # paths to ignore during linting. Takes precedence over `included`.
+  - Carthage
+opt_in_rules:
+  - multiline_parameters
+  - multiline_arguments
+  - private_outlet
+  - private_action
+  - operator_usage_whitespace
+  - overridden_super_call
+  - shorthand_operator
+  - single_test_class
+  - switch_case_on_newline
+  - yoda_condition
+  - unneeded_parentheses_in_closure_argument
+  - array_init
+  - closure_end_indentation
+  - closure_spacing
+  - contains_over_first_not_nil
+  - empty_count
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - sorted_first_last
+line_length: 140

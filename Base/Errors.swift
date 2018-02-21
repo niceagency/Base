@@ -58,8 +58,7 @@ public enum DataError: Int, ErrorType {
     case parse = 13002
 }
 
-public
-enum NetworkError: ErrorType {
+public enum NetworkError: ErrorType {
     
     public var code: Int {
         switch self {
@@ -67,8 +66,10 @@ enum NetworkError: ErrorType {
             return status
         case .authenticationError:
             return 401
-        case .noConnection(let (code,_)):
+        case .noConnection(let (code, _)):
             return code
+        case .malformedURL:
+            return 13003
         }
     }
     
@@ -80,10 +81,31 @@ enum NetworkError: ErrorType {
             return "Authentication details were rejected"
         case .noConnection(let (_, url)):
             return "No connection available for request to \(url)"
+        case .malformedURL:
+            return "URL in request is malformed"
         }
     }
     
     case httpError(Int)
     case authenticationError
-    case noConnection(Int,String)
+    case noConnection(Int, String)
+    case malformedURL
+}
+
+public enum URLComponentsTransformerError: ErrorType {
+    case badComponents
+    
+    public var description: String {
+        switch self {
+        case .badComponents:
+            return "Components provided cannot form a valid URL"
+        }
+    }
+    
+    public var code: Int {
+        switch self {
+        case .badComponents:
+            return 13004
+        }
+    }
 }

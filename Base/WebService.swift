@@ -12,97 +12,69 @@ public protocol UnauthorizedResponseHandler {
     func authorizedRequestDidFail(request: URLRequest, response: HTTPURLResponse, data: Data?, retry: @escaping () -> Void)
 }
 
-public final class Webservice {
-    
-    public let baseURL: URL
-    public let session: URLSession
-    private let unauthorizedResponseHandler: UnauthorizedResponseHandler?
-    private let defaultHeaders: HeaderProvider?
-    
-    public var behavior: RequestBehavior = EmptyRequestBehavior()
-    
-    init(baseURL: URL, unauthorizedResponseHandler: UnauthorizedResponseHandler? = nil, defaultHeaders: HeaderProvider? = nil, session: URLSession = URLSession.shared) {
-        self.baseURL = baseURL
-        self.session = session
-        self.unauthorizedResponseHandler = unauthorizedResponseHandler
-        self.defaultHeaders = defaultHeaders
+struct DataTaskCallback<A> {
+    let success: (URLResponse?, A) -> Void
+    let failure: (Error) -> Void
+    let retry: () -> Void
+    var unauthorizedResponseHandler: UnauthorizedResponseHandler?
+}
+
+extension NSError {
+    fileprivate func isCancelledError() -> Bool {
+        return self.domain == NSURLErrorDomain && self.code == NSURLErrorCancelled
     }
     
-    public var validResponseCodes = [200,201,204]
-    public var authFailureResponseCodes = [401]
+    fileprivate func isNoConnectivityError() -> Bool {
+        return self.domain == NSURLErrorDomain && self.code == NSURLErrorNotConnectedToInternet
+    }
+}
+
+extension URLSession {
     
-    public func request<A>(_ resource: Resource<A>,
-                        withBehavior additionalBehavior: RequestBehavior = EmptyRequestBehavior(),
-                        completion: @escaping (Result<A>) -> ()) {
+    private func handleErrorFor<A>(
+        data: Data?,
+        request: URLRequest,
+        response: HTTPURLResponse,
+        resource: Resource<A>,
+        callbacks: DataTaskCallback<A>) {
+        // Default to an HTTP error in case caller did not provide a response error handler
+        var error: Error = NAError(type: NetworkError.httpError(response.statusCode))
         
-        let behavior = CompositeRequestBehavior(behaviors: [ self.behavior, additionalBehavior ])
-        let headers = self.defaultHeaders?.headers() ?? []
-        
-        let plannedRequest = URLRequest(resource: resource, baseURL: self.baseURL, additionalHeaders: headers)
-        
-        BaseLog.network.log(.trace, plannedRequest)
-        
-        let request = behavior.modify(planned: plannedRequest) 
+        if let errorResponseHandler = resource.errorResponseHandler {
+            let responseError = errorResponseHandler(response.statusCode, data)
             
-        if request != plannedRequest {
-            BaseLog.network.log(.trace, request)
-        }
-        
-        let session = self.session
-        let cancel = resource.cancellationPolicy
-        
-        let matchURL = request.url!
-        
-        session.getAllTasks { tasks in
-            for running in tasks {
-                if cancel.matches(url: matchURL, with: running.originalRequest!.url!) {
-                    if running.state != .completed && running.state != .canceling {
-                        BaseLog.network.log(.trace, "Cancelling \(running) as a result of starting \(request)")
-                        running.cancel()
-                    }
-                }
+            if responseError != nil {
+                error = responseError!
             }
         }
         
-        behavior.before(sending: request)
-        
-        let retry = {
-            self.request(resource, withBehavior: behavior, completion: completion)
-        }
-        
-        let success: ((URLResponse?, A) -> ()) = { response, result in
+        if Webservice.ResponseCodes.authFailure.contains(response.statusCode), let handler = callbacks.unauthorizedResponseHandler {
             DispatchQueue.main.async {
-                completion(.success(result))
-                behavior.after(completion: response)
+                handler.authorizedRequestDidFail(request: request, response: response, data: data, retry: callbacks.retry)
             }
+        } else {
+            callbacks.failure(error)
         }
-        let failure: ((Error) -> ()) = { error in
-            DispatchQueue.main.async {
-                completion(.error(error))
-                behavior.after(failure: error, retry: retry)
-            }
-        }
+    }
+    
+    fileprivate func resourceDataTask<A>(
+        request: URLRequest,
+        resource: Resource<A>,
+        behavior: RequestBehavior,
+        callbacks: DataTaskCallback<A>) -> URLSessionDataTask {
         
-        let task = session.dataTask(with: request) { data, response, error in
+        return self.dataTask(with: request) { data, response, error in
             BaseLog.network.log(.trace, "done")
             
             if let error = error as NSError? {
-                let isCancelled = error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled
-                
-                // Suppress all cancelled request errors
-                guard !isCancelled else {
-                    behavior.after(completion: response)
+                if error.isCancelledError() {
                     return
                 }
                 
-                let noConnectivity = error.domain == NSURLErrorDomain && error.code == NSURLErrorNotConnectedToInternet
-                
-                guard !noConnectivity else {
-                    let failingURL = error.userInfo[NSURLErrorFailingURLStringErrorKey]! as! String
-                    
+                if error.isNoConnectivityError() {
+                    let failingURL = error.userInfo[NSURLErrorFailingURLStringErrorKey] ?? "Unknown URL"
                     BaseLog.network.log(.trace, "No connectivity available for request: \(failingURL)")
-                    
-                    failure(NAError(type: NetworkError.noConnection(error.code, failingURL)))
+                    callbacks.failure(NAError(type: NetworkError.noConnection(error.code, "\(failingURL)")))
                     return
                 }
             }
@@ -110,27 +82,12 @@ public final class Webservice {
             if let response = response as? HTTPURLResponse {
                 let statusCode = response.statusCode
                 
-                if !self.validResponseCodes.contains(statusCode) {
-                    
-                    // Default to an HTTP error in case caller did not provide a response error handler
-                    var error: Error = NAError(type: NetworkError.httpError(statusCode))
-                    
-                    if let errorResponseHandler = resource.errorResponseHandler {
-                        let responseError = errorResponseHandler(statusCode, data)
-                        
-                        if responseError != nil {
-                            error = responseError!
-                        }
-                    }
-                    
-                    if self.authFailureResponseCodes.contains(statusCode), let handler = self.unauthorizedResponseHandler {
-                        DispatchQueue.main.async {
-                            handler.authorizedRequestDidFail(request: request, response: response, data: data, retry: retry)
-                        }
-                    } else {
-                        failure(error)
-                    }
-                    
+                if !Webservice.ResponseCodes.valid.contains(statusCode) {
+                    self.handleErrorFor(data: data,
+                                        request: request,
+                                        response: response,
+                                        resource: resource,
+                                        callbacks: callbacks)
                     return
                 }
             }
@@ -142,17 +99,104 @@ public final class Webservice {
                 
                 switch result {
                 case .success(let value):
-                    success(response, value)
+                    callbacks.success(response, value)
                 case .error(let error):
-                    failure(error)
+                    callbacks.failure(error)
                 }
             } else {
                 BaseLog.network.log(.trace, "no data returned")
                 
-                failure(error ?? NAError(type: NetworkError.httpError(-1)))
+                callbacks.failure(error ?? NAError(type: NetworkError.httpError(-1)))
+            }
+        }
+    }
+}
+
+public final class Webservice {
+    
+    fileprivate struct ResponseCodes {
+        static let valid = [200, 201, 204]
+        static let authFailure = [401]
+    }
+    
+    public let baseURL: URL
+    public let session: URLSession
+    private let unauthorizedResponseHandler: UnauthorizedResponseHandler?
+    private let defaultHeaders: HeaderProvider?
+    
+    public var behavior: RequestBehavior = EmptyRequestBehavior()
+    
+    init(baseURL: URL,
+         unauthorizedResponseHandler: UnauthorizedResponseHandler? = nil,
+         defaultHeaders: HeaderProvider? = nil,
+         session: URLSession = URLSession.shared) {
+        self.baseURL = baseURL
+        self.session = session
+        self.unauthorizedResponseHandler = unauthorizedResponseHandler
+        self.defaultHeaders = defaultHeaders
+    }
+    
+    public func request<A>(_ resource: Resource<A>,
+                           withBehavior additionalBehavior: RequestBehavior? = nil,
+                           completion: @escaping (Result<A>) -> Void) {
+        
+        let behavior = self.behavior.adding(additionalBehavior ?? EmptyRequestBehavior())
+        let headers = self.defaultHeaders?.headers() ?? []
+        
+        guard let plannedRequest = URLRequest(resource: resource,
+                                              baseURL: self.baseURL,
+                                              additionalHeaders: headers,
+                                              requestBehaviour: behavior) else {
+                                                DispatchQueue.main.async { completion(.error(NAError<NetworkError>(type: .malformedURL))) }
+                                                return
+        }
+        
+        BaseLog.network.log(.trace, plannedRequest)
+        
+        let request = behavior.modify(planned: plannedRequest) 
+        
+        if request != plannedRequest { BaseLog.network.log(.trace, request) }
+        
+        let session = self.session
+        let cancel = resource.cancellationPolicy
+        
+        let matchURL = request.url!
+        
+        session.getAllTasks { tasks in
+            tasks
+                .filter { cancel.matches(url: matchURL, with: $0.originalRequest!.url!) }
+                .filter { $0.state != .completed && $0.state != .canceling }
+                .forEach {
+                    BaseLog.network.log(.trace, "Cancelling \($0) as a result of starting \(request)")
+                    $0.cancel()
+                }
+        }
+        
+        behavior.before(sending: request)
+        
+        let retry = { self.request(resource, withBehavior: behavior, completion: completion) }
+        
+        let success: ((URLResponse?, A) -> Void) = { response, result in
+            DispatchQueue.main.async {
+                completion(.success(result))
+                behavior.after(completion: response)
             }
         }
         
+        let failure: ((Error) -> Void) = { error in
+            DispatchQueue.main.async {
+                completion(.error(error))
+                behavior.after(failure: error, retry: retry)
+            }
+        }
+        
+        let task = session.resourceDataTask(request: request,
+                                            resource: resource,
+                                            behavior: behavior,
+                                            callbacks: DataTaskCallback(success: success,
+                                                                        failure: failure,
+                                                                        retry: retry,
+                                                                        unauthorizedResponseHandler: unauthorizedResponseHandler))
         task.resume()
         
         BaseLog.network.log(.trace, "Started \(task) for \(request)")
@@ -160,48 +204,45 @@ public final class Webservice {
 }
 
 fileprivate extension Resource {
-    func url(for baseURL: URL) -> URL {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = baseURL.scheme!
-        urlComponents.host = baseURL.host
-        urlComponents.port = baseURL.port
-        urlComponents.path = baseURL.path.appending(self.endpoint)
-        
-        if let query = self.query, !query.isEmpty {
-            urlComponents.queryItems = query
-        }
-        
-        return urlComponents.url!
+    func urlComponents(for baseURL: URL) -> URLComponents {
+        return URLComponents()
+            .transformer()
+            .modifying(scheme: baseURL.scheme)
+            .modifying(host: baseURL.host)
+            .modifying(port: baseURL.port)
+            .modifying(path: baseURL.path)
+            .replacing(queryItems: self.query)
+            .components()
     }
 }
 
 fileprivate extension HttpMethod {
- 
-    func map<B>(f: (Body) -> B) -> HttpMethod<B> {
+    
+    func map<B>(serialize: (Body) -> B) -> HttpMethod<B> {
         switch self {
         case .get(let body):
             if let b = body {
-                return .get(f(b))
+                return .get(serialize(b))
             }
             return .get(nil)
         case .post(let body):
             if let b = body {
-                return .post(f(b))
+                return .post(serialize(b))
             }
             return .post(nil)
         case .put(let body):
             if let b = body {
-                return .put(f(b))
+                return .put(serialize(b))
             }
             return .put(nil)
         case .delete(let body):
             if let b = body {
-                return .delete(f(b))
+                return .delete(serialize(b))
             }
             return .delete(nil)
         case .patch(let body):
             if let b = body {
-                return .patch(f(b))
+                return .patch(serialize(b))
             }
             return .patch(nil)
         }
@@ -240,15 +281,25 @@ fileprivate extension CancellationPolicy {
 }
 
 fileprivate extension URLRequest {
-    init<A>(resource: Resource<A>, baseURL: URL, additionalHeaders: [(String, String)]) {
-        self.init(url: resource.url(for: baseURL))
+    init?<A>(resource: Resource<A>, baseURL: URL, additionalHeaders: [(String, String)], requestBehaviour: RequestBehavior) {
+        
+        guard let url = requestBehaviour.modify(urlComponents: resource.urlComponents(for: baseURL)).url else {
+            return nil
+        }
+        
+        self.init(url: url)
         
         let method = resource.method.map { input -> Data in
-            if input is Data {
-                return input as! Data
+            
+            if let input = input as? Data {
+                return input
             }
             
-            return try! JSONSerialization.data(withJSONObject: input, options: [])
+            if let jsonData = try? JSONSerialization.data(withJSONObject: input, options: []) {
+                return jsonData
+            }
+            
+            fatalError("Unhandled input provided to HTTPMethod - \(input)")
         }
         
         httpMethod = method.name
@@ -266,13 +317,9 @@ fileprivate extension URLRequest {
             httpBody = data
         }
         
-        if let provider = resource.headerProvider {
-            for (header, value) in provider.headers() {
-                addValue(value, forHTTPHeaderField: header)
-            }
-        }
+        let headers = resource.headerProvider?.headers() ?? [] + additionalHeaders
         
-        for (header, value) in additionalHeaders {
+        for (header, value) in headers {
             addValue(value, forHTTPHeaderField: header)
         }
     }

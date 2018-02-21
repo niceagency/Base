@@ -8,9 +8,6 @@
 
 import Foundation
 
-public let BaseTestableDate_Environment_key = "TEST_REFERENCE_DATE"
-public let BaseTestableDate_Environment_format = "yyyy-MM-dd'T'HH:mm:ss"
-
 public struct TestableDate {
     public static var testReferenceDate: Date?
     

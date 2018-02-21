@@ -17,11 +17,16 @@ public enum HttpMethod<Body> {
     
     var name: String {
         switch self {
-        case .get: return "GET"
-        case .post: return "POST"
-        case .put: return "PUT"
-        case .delete: return "DELETE"
-        case .patch: return "PATCH"
+        case .get:
+            return "GET"
+        case .post:
+            return "POST"
+        case .put:
+            return "PUT"
+        case .delete:
+            return "DELETE"
+        case .patch:
+            return "PATCH"
         }
     }
 }
@@ -43,12 +48,12 @@ public struct Resource<A> {
     public let cancellationPolicy: CancellationPolicy
     
     public init(endpoint: String,
-         method: HttpMethod<Any> = .get(nil),
-         query: [URLQueryItem]? = nil,
-         headerProvider: HeaderProvider? = nil,
-         cancellationPolicy: CancellationPolicy = .none,
-         errorResponseHandler: ((Int, Data?) -> (Error?))? = nil,
-         parse: @escaping (Data) -> (Result<A>)) {
+                method: HttpMethod<Any> = .get(nil),
+                query: [URLQueryItem]? = nil,
+                headerProvider: HeaderProvider? = nil,
+                cancellationPolicy: CancellationPolicy = .none,
+                errorResponseHandler: ((Int, Data?) -> (Error?))? = nil,
+                parse: @escaping (Data) -> (Result<A>)) {
         
         self.endpoint = endpoint
         self.method = method

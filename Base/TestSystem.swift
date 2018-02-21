@@ -21,23 +21,23 @@ public struct TestSystem {
         
         let env = ProcessInfo.processInfo.environment
         
-        if let testURLStubSetting = env[BaseTestableSession_Config_Environment_key] {
+        if let testURLStubSetting = env[BaseTestEnvironment.SessionConfig.key] {
             let config = TestURLSessionConfiguration(environmentVariable: testURLStubSetting)
             testURLSession = TestURLSession(testMapping: config)
             testing = true
         }
         
-        if let testReferenceDateSetting = env[BaseTestableDate_Environment_key] {
+        if let testReferenceDateSetting = env[BaseTestEnvironment.Date.key] {
             let formatter = DateFormatter()
             formatter.locale = Locale(identifier: "en_US_POSIX") 
-            formatter.dateFormat = BaseTestableDate_Environment_format
+            formatter.dateFormat = BaseTestEnvironment.Date.format
             
             TestableDate.testReferenceDate = formatter.date(from: testReferenceDateSetting)
             testing = true
         }
         
         if testing {
-            BaseDomain.logStore = Log<BaseDomain, BaseLevel>(specs:  [
+            BaseDomain.logStore = Log<BaseDomain, BaseLevel>(specs: [
                 (domain: .network, level: .none, logger: nil),
                 (domain: .coreData, level: .none, logger: nil),
                 (domain: .testSupport, level: .trace, logger: nil)
@@ -48,7 +48,7 @@ public struct TestSystem {
     public static func environmentRepresentation(forTestReferenceDate date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX") 
-        formatter.dateFormat = BaseTestableDate_Environment_format
+        formatter.dateFormat = BaseTestEnvironment.Date.format
         
         return formatter.string(from: date)
     }
