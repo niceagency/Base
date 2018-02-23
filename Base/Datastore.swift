@@ -122,10 +122,9 @@ public final class Datastore {
                     .map { $0.objectID }
                     .map { viewContext.object(with: $0) }
                 
-                for object in viewContextObjects {
-                    BaseLog.coreData.log(.trace, "Refreshing \(object) on context: \(viewContext)")
-                    
-                    viewContext.perform {
+                viewContext.perform { [unowned self] in
+                    for object in viewContextObjects {
+                        BaseLog.coreData.log(.trace, "Refreshing \(object) on context: \(self.viewContext)")
                         self.viewContext.refresh(object, mergeChanges: false)
                     }
                 }
