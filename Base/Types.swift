@@ -8,16 +8,16 @@
 
 import Foundation
 
-protocol Weakly {
+public protocol Weakly {
     associatedtype Value: AnyObject
     var weak: Weak<Value> { get }
 }
 
 extension Weak: Weakly {
-    var weak: Weak<Value> { return self }
+    public var weak: Weak<Value> { return self }
 }
 
-extension Array where Element: Weakly, Element.Value: Equatable {
+public extension Array where Element: Weakly, Element.Value: Equatable {
     func contains(_ value: Element.Value) -> Bool {
         return self.contains(where: { $0.weak.value == value })
     }

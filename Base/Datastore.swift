@@ -96,18 +96,9 @@ public final class Datastore {
     
     @objc fileprivate func mocDidSave(note: Notification) {
         
-        guard let moc = note.object as? NSManagedObjectContext else {
+        guard let moc = note.object as? NSManagedObjectContext,
+            moc.persistentStoreCoordinator == viewContext.persistentStoreCoordinator else {
             return
-        }
-        
-        if let userInfo = note.userInfo {
-                
-            if let updatedObjects = userInfo[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-                for object in updatedObjects {
-                    BaseLog.coreData.log(.trace, "Refreshing \(object) on context: \(moc)")
-                    moc.refresh(object, mergeChanges: false)
-                }
-            }
         }
         
         if forwardSaveToParentContexts.contains(moc),
@@ -119,6 +110,24 @@ public final class Datastore {
                     try parent.save()
                 } catch {
                     BaseLog.coreData.log(.error, "Error trying to save the store: \(error)")
+                }
+            }
+        }
+        
+        if let userInfo = note.userInfo {
+            
+            if let updatedObjects = userInfo[NSUpdatedObjectsKey] as? Set<NSManagedObject>, !updatedObjects.isEmpty {
+                
+                let viewContextObjects = updatedObjects
+                    .map { $0.objectID }
+                    .map { viewContext.object(with: $0) }
+                
+                for object in viewContextObjects {
+                    BaseLog.coreData.log(.trace, "Refreshing \(object) on context: \(viewContext)")
+                    
+                    viewContext.perform {
+                        self.viewContext.refresh(object, mergeChanges: false)
+                    }
                 }
             }
         }
