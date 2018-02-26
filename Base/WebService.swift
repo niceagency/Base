@@ -206,13 +206,11 @@ public final class Webservice {
 fileprivate extension Resource {
     func urlComponents(for baseURL: URL) -> URLComponents {
         return URLComponents()
-            .transformer()
             .modifying(scheme: baseURL.scheme)
             .modifying(host: baseURL.host)
             .modifying(port: baseURL.port)
             .modifying(path: baseURL.path)
             .replacing(queryItems: self.query)
-            .components()
     }
 }
 
