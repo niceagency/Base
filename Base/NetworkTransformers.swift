@@ -8,107 +8,59 @@
 
 import Foundation
 
-public extension URLComponents {
-    func transformer() -> URLComponentsTransformer {
-        return URLComponentsTransformer(self)
-    }
-}
-
 public extension URLRequest {
-    func transformer() -> URLRequestTransformer {
-        return URLRequestTransformer(self)
-    }
-}
-
-public final class URLComponentsTransformer {
-    private var storedURLComponents: URLComponents
-    
-    public init(_ urlComponents: URLComponents) {
-        self.storedURLComponents = urlComponents
-    }
-    
-    public func request() throws -> URLRequest {
-        guard let url = storedURLComponents.url else {
-            throw NAError<URLComponentsTransformerError>(type: .badComponents)
-        }
+    public func appending(headers: [(String, String)]) -> URLRequest {
         
-        return URLRequest(url: url)
-    }
-    
-    public func requestTransformer() throws -> URLRequestTransformer {
-        guard let request = try? request() else {
-            throw NAError<URLComponentsTransformerError>(type: .badComponents)
-        }
-        
-        return request.transformer()
-    }
-    
-    public func components() -> URLComponents {
-        return storedURLComponents
-    }
-    
-    public func replacing(queryItems: [URLQueryItem]?) -> URLComponentsTransformer {
-        storedURLComponents.queryItems = queryItems
-        return self
-    }
-    
-    public func appending(queryItems: [URLQueryItem]) -> URLComponentsTransformer {
-        let existingQueryItems = storedURLComponents.queryItems ?? []
-        storedURLComponents.queryItems = existingQueryItems + queryItems
-        return self
-    }
-    
-    public func modifying(scheme: String?) -> URLComponentsTransformer {
-        storedURLComponents.scheme = scheme
-        return self
-    }
-    
-    public func modifying(port: Int?) -> URLComponentsTransformer {
-        storedURLComponents.port = port
-        return self
-    }
-    
-    public func modifying(path: String) -> URLComponentsTransformer {
-        storedURLComponents.path = path
-        return self
-    }
-    
-    public func modifying(host: String?) -> URLComponentsTransformer {
-        storedURLComponents.host = host
-        return self
-    }
-}
-
-public final class URLRequestTransformer {
-    private var storedRequest: URLRequest
-    
-    public init(_ request: URLRequest) {
-        self.storedRequest = request
-    }
-    
-    public func request() -> URLRequest {
-        return storedRequest
-    }
-    
-    public func appending(headers: [(String, String)]) -> URLRequestTransformer {
-        
-        var request = storedRequest
-        
+        var copy = self
         headers.forEach { header, value in
-            request.addValue(value, forHTTPHeaderField: header)
+            copy.addValue(value, forHTTPHeaderField: header)
         }
-        
-        storedRequest = request
-        
-        return self
+
+        return copy
     }
     
-    public func modifying(cachePolicy: NSURLRequest.CachePolicy) -> URLRequestTransformer {
-        var request = storedRequest
-        request.cachePolicy = cachePolicy
-        
-        storedRequest = request
-        
-        return self
+    public func modifying(cachePolicy: NSURLRequest.CachePolicy) -> URLRequest {
+        var copy = self
+        copy.cachePolicy = cachePolicy
+        return copy
+    }
+}
+
+public extension URLComponents {
+    public func replacing(queryItems: [URLQueryItem]?) -> URLComponents {
+        var copy = self
+        copy.queryItems = queryItems
+        return copy
+    }
+    
+    public func appending(queryItems: [URLQueryItem]) -> URLComponents {
+        var copy = self
+        let existingQueryItems = self.queryItems ?? []
+        copy.queryItems = existingQueryItems + queryItems
+        return copy
+    }
+    
+    public func modifying(scheme: String?) -> URLComponents {
+        var copy = self
+        copy.scheme = scheme
+        return copy
+    }
+    
+    public func modifying(port: Int?) -> URLComponents {
+        var copy = self
+        copy.port = port
+        return copy
+    }
+    
+    public func modifying(path: String) -> URLComponents {
+        var copy = self
+        copy.path = path
+        return copy
+    }
+    
+    public func modifying(host: String?) -> URLComponents {
+        var copy = self
+        copy.host = host
+        return copy
     }
 }
