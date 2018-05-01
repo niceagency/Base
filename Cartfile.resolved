@@ -1,2 +1,2 @@
-github "ashleymills/Reachability.swift" "v3.0"
-github "niceagency/Log" "3.0"
+github "niceagency/Log" "3.1"
+github "ashleymills/Reachability.swift" "v4.1.0"
