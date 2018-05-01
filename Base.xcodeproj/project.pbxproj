@@ -22,6 +22,7 @@
 		B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D1E1E43914C00DAFF6B /* WebService.swift */; };
 		B06A5D321E43931200DAFF6B /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D311E43931200DAFF6B /* Reachability.framework */; };
 		B06A5D341E43944C00DAFF6B /* BaseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06A5D331E43944C00DAFF6B /* BaseLog.swift */; };
+		B07930682098753C003514E9 /* BaseLayoutConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07930672098753C003514E9 /* BaseLayoutConstraint.swift */; };
 		B092983C1FCF16FE00F6D9DF /* TestableDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983B1FCF16FE00F6D9DF /* TestableDate.swift */; };
 		B092983E1FCF18C500F6D9DF /* TestSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983D1FCF18C500F6D9DF /* TestSystem.swift */; };
 		B09298401FD57ABA00F6D9DF /* TestURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B092983F1FD57ABA00F6D9DF /* TestURLSession.swift */; };
@@ -50,6 +51,7 @@
 		B06A5D1E1E43914C00DAFF6B /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		B06A5D311E43931200DAFF6B /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
 		B06A5D331E43944C00DAFF6B /* BaseLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseLog.swift; sourceTree = "<group>"; };
+		B07930672098753C003514E9 /* BaseLayoutConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLayoutConstraint.swift; sourceTree = "<group>"; };
 		B092983B1FCF16FE00F6D9DF /* TestableDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestableDate.swift; sourceTree = "<group>"; };
 		B092983D1FCF18C500F6D9DF /* TestSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSystem.swift; sourceTree = "<group>"; };
 		B092983F1FD57ABA00F6D9DF /* TestURLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestURLSession.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				B0FF57131FA0D9B80078F1B2 /* UIView+AutoLayout.swift */,
+				B07930672098753C003514E9 /* BaseLayoutConstraint.swift */,
 			);
 			name = Layout;
 			sourceTree = "<group>";
@@ -331,6 +334,7 @@
 				B06A5D241E43914C00DAFF6B /* Pagination.swift in Sources */,
 				B092983C1FCF16FE00F6D9DF /* TestableDate.swift in Sources */,
 				B06A5D271E43914C00DAFF6B /* UIRequestBehavior.swift in Sources */,
+				B07930682098753C003514E9 /* BaseLayoutConstraint.swift in Sources */,
 				B0FF57171FA0EC9B0078F1B2 /* Coordinator.swift in Sources */,
 				B06A5D281E43914C00DAFF6B /* WebService.swift in Sources */,
 				875D0C89203F16F600B57A89 /* Types.swift in Sources */,
