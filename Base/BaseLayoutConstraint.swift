@@ -19,8 +19,37 @@ final class BaseLayoutConstraint: NSLayoutConstraint {
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        guide.identifier = self.identifier ?? "?.?"
+        
+        self.addLayoutGuide()
+        
+        if let view1 = self.secondItem as? UIView {
+            self.convertToLeadingConstraint(linkedView: view1)
+        } else if let guide1 = self.secondItem as? UILayoutGuide {
+            self.convertToLeadingConstraint(linkedGuide: guide1)
+        } else {
+            assertionFailure("Not connected to a view or a layout guide")
+            return
+        }
+        
+        if let view2 = self.firstItem as? UIView {
+            self.convertToTrailingConstraint(linkedView: view2)
+        } else if let guide2 = self.firstItem as? UILayoutGuide {
+            self.convertToTrailingConstraint(linkedGuide: guide2)
+        } else {
+            assertionFailure("Not connected to a view or a layout guide")
+            return
+        }
+        
+        self.applySpacingConstraints()
+        
+        self.isActive = false
+    }
+    
+    // MARK: -
+    
+    private func addLayoutGuide() {
         var parent: UIView?
-        var constraints: [NSLayoutConstraint] = []
         
         if let view1 = self.firstItem as? UIView,
             let view2 = self.secondItem as? UIView {
@@ -41,125 +70,103 @@ final class BaseLayoutConstraint: NSLayoutConstraint {
             return
         }
         
-        guide.identifier = self.identifier ?? "?.?"
-        
         superview.addLayoutGuide(guide)
+    }
+    
+    private func convertToLeadingConstraint(linkedView view: UIView) {
+        let attr = self.secondAttribute
         
-        if let view1 = self.firstItem as? UIView {
-            switch self.firstAttribute {
-            case .left:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.leftAnchor))
-            case .right:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.rightAnchor))
-            case .top:
-                constraints.append(guide.topAnchor.constraint(equalTo: view1.topAnchor))
-            case .bottom:
-                constraints.append(guide.topAnchor.constraint(equalTo: view1.bottomAnchor))
-            case .leading:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.leadingAnchor))
-            case .trailing:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.trailingAnchor))
-            case .leftMargin:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.layoutMarginsGuide.leftAnchor))
-            case .rightMargin:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.layoutMarginsGuide.rightAnchor))
-            case .topMargin:
-                constraints.append(guide.topAnchor.constraint(equalTo: view1.layoutMarginsGuide.topAnchor))
-            case .bottomMargin:
-                constraints.append(guide.topAnchor.constraint(equalTo: view1.layoutMarginsGuide.bottomAnchor))
-            case .leadingMargin:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.layoutMarginsGuide.leadingAnchor))
-            case .trailingMargin:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: view1.layoutMarginsGuide.trailingAnchor))
-            default:
-                assertionFailure("Invalid attribute supplied")
-                return
-            }
-        } else if let guide1 = self.firstItem as? UILayoutGuide {
-            switch self.firstAttribute {
-            case .left:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: guide1.leftAnchor))
-            case .right:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: guide1.rightAnchor))
-            case .top:
-                constraints.append(guide.topAnchor.constraint(equalTo: guide1.topAnchor))
-            case .bottom:
-                constraints.append(guide.topAnchor.constraint(equalTo: guide1.bottomAnchor))
-            case .leading:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: guide1.leadingAnchor))
-            case .trailing:
-                constraints.append(guide.leadingAnchor.constraint(equalTo: guide1.trailingAnchor))
-            default:
-                assertionFailure("Invalid attribute supplied")
-                return
-            }
-        } else {
-            assertionFailure("Not connected to a view or a layout guide")
+        switch attr {
+        case .left,
+             .right,
+             .leading,
+             .trailing:
+            guide.leadingAnchor.constraint(equalTo: view.xAxisAnchor(forAttribute: attr)).isActive = true
+        case .leftMargin,
+             .rightMargin,
+             .leadingMargin,
+             .trailingMargin:
+            guide.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.xAxisAnchor(forAttribute: attr)).isActive = true
+        case .top,
+             .bottom:
+            guide.topAnchor.constraint(equalTo: view.yAxisAnchor(forAttribute: attr)).isActive = true
+        case .topMargin,
+             .bottomMargin:
+            guide.topAnchor.constraint(equalTo: view.layoutMarginsGuide.yAxisAnchor(forAttribute: attr)).isActive = true
+        default:
+            assertionFailure("Invalid attribute supplied")
             return
         }
+    }
+    
+    private func convertToLeadingConstraint(linkedGuide: UILayoutGuide) { 
+        let attr = self.secondAttribute
         
-        if let view2 = self.secondItem as? UIView {
-            if parent == nil {
-                parent = view2.superview
-            }
-            
-            switch self.secondAttribute {
-            case .left:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.leftAnchor))
-            case .right:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.rightAnchor))
-            case .top:
-                constraints.append(guide.bottomAnchor.constraint(equalTo: view2.topAnchor))
-            case .bottom:
-                constraints.append(guide.bottomAnchor.constraint(equalTo: view2.bottomAnchor))
-            case .leading:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.leadingAnchor))
-            case .trailing:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.trailingAnchor))
-            case .leftMargin:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.layoutMarginsGuide.leftAnchor))
-            case .rightMargin:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.layoutMarginsGuide.rightAnchor))
-            case .topMargin:
-                constraints.append(guide.bottomAnchor.constraint(equalTo: view2.layoutMarginsGuide.topAnchor))
-            case .bottomMargin:
-                constraints.append(guide.bottomAnchor.constraint(equalTo: view2.layoutMarginsGuide.bottomAnchor))
-            case .leadingMargin:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.layoutMarginsGuide.leadingAnchor))
-            case .trailingMargin:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: view2.layoutMarginsGuide.trailingAnchor))
-            default:
-                assertionFailure("Invalid attribute supplied")
-                return
-            }
-        } else if let guide2 = self.secondItem as? UILayoutGuide {
-            switch self.secondAttribute {
-            case .left:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: guide2.leftAnchor))
-            case .right:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: guide2.rightAnchor))
-            case .top:
-                constraints.append(guide.bottomAnchor.constraint(equalTo: guide2.topAnchor))
-            case .bottom:
-                constraints.append(guide.bottomAnchor.constraint(equalTo: guide2.bottomAnchor))
-            case .leading:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: guide2.leadingAnchor))
-            case .trailing:
-                constraints.append(guide.trailingAnchor.constraint(equalTo: guide2.trailingAnchor))
-            default:
-                assertionFailure("Invalid attribute supplied")
-                return
-            }
-        } else {
-            assertionFailure("Not connected to a view or a layout guide")
+        switch attr {
+        case .left,
+             .right,
+             .leading,
+             .trailing:
+            guide.leadingAnchor.constraint(equalTo: linkedGuide.xAxisAnchor(forAttribute: attr)).isActive = true
+        case .top,
+             .bottom:
+            guide.topAnchor.constraint(equalTo: linkedGuide.yAxisAnchor(forAttribute: attr)).isActive = true
+        default:
+            assertionFailure("Invalid attribute supplied")
             return
         }
+    }
+    
+    private func convertToTrailingConstraint(linkedView view: UIView) {
+        let attr = self.firstAttribute
         
+        switch attr {
+        case .left,
+             .right,
+             .leading,
+             .trailing:
+            guide.trailingAnchor.constraint(equalTo: view.xAxisAnchor(forAttribute: attr)).isActive = true
+        case .leftMargin,
+             .rightMargin,
+             .leadingMargin,
+             .trailingMargin:
+            guide.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.xAxisAnchor(forAttribute: attr)).isActive = true
+        case .top,
+             .bottom:
+            guide.bottomAnchor.constraint(equalTo: view.yAxisAnchor(forAttribute: attr)).isActive = true
+        case .topMargin,
+             .bottomMargin:
+            guide.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.yAxisAnchor(forAttribute: attr)).isActive = true
+        default:
+            assertionFailure("Invalid attribute supplied")
+            return
+        }
+    }
+    
+    private func convertToTrailingConstraint(linkedGuide: UILayoutGuide) {
+        let attr = self.firstAttribute
+        
+        switch attr {
+        case .left,
+             .right,
+             .leading,
+             .trailing:
+            guide.trailingAnchor.constraint(equalTo: linkedGuide.xAxisAnchor(forAttribute: attr)).isActive = true
+        case .top,
+             .bottom:
+            guide.bottomAnchor.constraint(equalTo: linkedGuide.yAxisAnchor(forAttribute: attr)).isActive = true
+        default:
+            assertionFailure("Invalid attribute supplied")
+            return
+        }
+    }
+    
+    private func applySpacingConstraints() {
         if let width = equalWidthTo {
             let constraint = guide.widthAnchor.constraint(equalTo: width.guide.widthAnchor)
             
             if width.guide.owningView != nil {
-                constraints.append(constraint)
+                constraint.isActive = true
             } else {
                 width.altConstraints.append(constraint)
             }
@@ -169,17 +176,89 @@ final class BaseLayoutConstraint: NSLayoutConstraint {
             let constraint = guide.heightAnchor.constraint(equalTo: height.guide.heightAnchor)
             
             if height.guide.owningView != nil {
-                constraints.append(constraint)
+                constraint.isActive = true
             } else {
                 height.altConstraints.append(constraint)
             }
         }
         
-        constraints.forEach({ $0.isActive = true })
         altConstraints.forEach({ $0.isActive = true })
-        
         altConstraints.removeAll()
+    }
+}
+
+// MARK: -
+
+private extension UIView {
+    private static let xMapping: [NSLayoutAttribute: ((UIView) -> NSLayoutXAxisAnchor)] = [
+        .left: { $0.leftAnchor },
+        .right: { $0.rightAnchor },
+        .leading: { $0.leadingAnchor },
+        .trailing: { $0.trailingAnchor },
+        .leftMargin: { $0.leftAnchor },
+        .rightMargin: { $0.rightAnchor },
+        .leadingMargin: { $0.leadingAnchor },
+        .trailingMargin: { $0.trailingAnchor }
+    ]
+    
+    private static let yMapping: [NSLayoutAttribute: ((UIView) -> NSLayoutYAxisAnchor)] = [
+        .top: { $0.topAnchor },
+        .bottom: { $0.bottomAnchor },
+        .topMargin: { $0.topAnchor },
+        .bottomMargin: { $0.bottomAnchor }
+    ]
+    
+    func xAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutXAxisAnchor {
+        guard let anchorMapping = UIView.xMapping[attr] else {
+            assertionFailure("Invalid attribute supplied")
+            return leadingAnchor
+        }
         
-        self.isActive = false
+        return anchorMapping(self)
+    }
+    func yAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutYAxisAnchor {
+        guard let anchorMapping = UIView.yMapping[attr] else {
+            assertionFailure("Invalid attribute supplied")
+            return topAnchor
+        }
+        
+        return anchorMapping(self)
+    }
+}
+
+private extension UILayoutGuide {
+    private static let xMapping: [NSLayoutAttribute: ((UILayoutGuide) -> NSLayoutXAxisAnchor)] = [
+        .left: { $0.leftAnchor },
+        .right: { $0.rightAnchor },
+        .leading: { $0.leadingAnchor },
+        .trailing: { $0.trailingAnchor },
+        .leftMargin: { $0.leftAnchor },
+        .rightMargin: { $0.rightAnchor },
+        .leadingMargin: { $0.leadingAnchor },
+        .trailingMargin: { $0.trailingAnchor }
+    ]
+    
+    private static let yMapping: [NSLayoutAttribute: ((UILayoutGuide) -> NSLayoutYAxisAnchor)] = [
+        .top: { $0.topAnchor },
+        .bottom: { $0.bottomAnchor },
+        .topMargin: { $0.topAnchor },
+        .bottomMargin: { $0.bottomAnchor }
+    ]
+    
+    func xAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutXAxisAnchor {
+        guard let anchorMapping = UILayoutGuide.xMapping[attr] else {
+            assertionFailure("Invalid attribute supplied")
+            return leadingAnchor
+        }
+        
+        return anchorMapping(self)
+    }
+    func yAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutYAxisAnchor {
+        guard let anchorMapping = UILayoutGuide.yMapping[attr] else {
+            assertionFailure("Invalid attribute supplied")
+            return topAnchor
+        }
+        
+        return anchorMapping(self)
     }
 }
