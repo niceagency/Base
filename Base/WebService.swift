@@ -209,7 +209,7 @@ fileprivate extension Resource {
             .modifying(scheme: baseURL.scheme)
             .modifying(host: baseURL.host)
             .modifying(port: baseURL.port)
-            .modifying(path: baseURL.path)
+            .modifying(path: baseURL.path.appending(self.endpoint))
             .replacing(queryItems: self.query)
     }
 }
