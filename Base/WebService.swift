@@ -219,28 +219,28 @@ fileprivate extension HttpMethod {
     func map<B>(serialize: (Body) -> B) -> HttpMethod<B> {
         switch self {
         case .get(let body):
-            if let b = body {
-                return .get(serialize(b))
+            if let body = body {
+                return .get(serialize(body))
             }
             return .get(nil)
         case .post(let body):
-            if let b = body {
-                return .post(serialize(b))
+            if let body = body {
+                return .post(serialize(body))
             }
             return .post(nil)
         case .put(let body):
-            if let b = body {
-                return .put(serialize(b))
+            if let body = body {
+                return .put(serialize(body))
             }
             return .put(nil)
         case .delete(let body):
-            if let b = body {
-                return .delete(serialize(b))
+            if let body = body {
+                return .delete(serialize(body))
             }
             return .delete(nil)
         case .patch(let body):
-            if let b = body {
-                return .patch(serialize(b))
+            if let body = body {
+                return .patch(serialize(body))
             }
             return .patch(nil)
         }

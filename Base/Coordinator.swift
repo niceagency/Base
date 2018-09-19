@@ -65,7 +65,7 @@ open class Coordinator {
     open func selfDestructIfPossible() {
         destroyCompleteChildren()
         
-        if childViewControllers.flatMap({ $0.value }).isEmpty {
+        if childViewControllers.compactMap({ $0.value }).isEmpty {
             notifyCompletion()
         }
     }
