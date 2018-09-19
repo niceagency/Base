@@ -38,7 +38,7 @@ public enum CancellationPolicy {
     case pattern(String)
 }
 
-public struct Resource<A> {
+public struct Resource<A: Codable > {
     public let endpoint: String
     public let method: HttpMethod<Any>
     public let query: [URLQueryItem]?
@@ -53,8 +53,15 @@ public struct Resource<A> {
                 headerProvider: HeaderProvider? = nil,
                 cancellationPolicy: CancellationPolicy = .none,
                 errorResponseHandler: ((Int, Data?) -> (Error?))? = nil,
-                parse: @escaping (Data) -> (Result<A>)) {
-        
+                parse: @escaping (Data) -> (Result<A>)  = { data in
+            do {
+                let parsedObject = try JSONDecoder().decode(A.self, from: data)
+                return Result.success(parsedObject)
+                } catch let error {
+                    return Result.error(error)
+                }
+            }
+        ) {
         self.endpoint = endpoint
         self.method = method
         self.query = query
