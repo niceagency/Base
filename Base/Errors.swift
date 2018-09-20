@@ -104,3 +104,21 @@ public enum URLComponentsTransformerError: ErrorType {
         }
     }
 }
+
+public struct ErrorData {
+    
+    let code: Int
+    let data: Data?
+    
+    init?( code: Int, data: Data? ) {
+        
+        let validRange: ClosedRange = 300...599
+        
+        guard validRange.contains(code) else {
+            return nil
+        }
+        
+        self.code = code
+        self.data = data
+    }
+}

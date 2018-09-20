@@ -44,7 +44,7 @@ public struct Resource<A> {
     public let query: [URLQueryItem]?
     public let headerProvider: HeaderProvider?
     public let parse: (Data) -> (Result<A>)
-    public let errorResponseHandler: ((Int, Data?) -> (Error?))?
+    public let errorResponseHandler: ((ErrorData) -> (Error?))?
     public let cancellationPolicy: CancellationPolicy
     
     public init(endpoint: String,
@@ -52,7 +52,7 @@ public struct Resource<A> {
                 query: [URLQueryItem]? = nil,
                 headerProvider: HeaderProvider? = nil,
                 cancellationPolicy: CancellationPolicy = .none,
-                errorResponseHandler: ((Int, Data?) -> (Error?))? = nil,
+                errorResponseHandler: ((ErrorData) -> (Error?))? = nil,
                 parse: @escaping (Data) -> (Result<A>)) {
         
         self.endpoint = endpoint
