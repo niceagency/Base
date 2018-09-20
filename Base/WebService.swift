@@ -42,7 +42,7 @@ extension URLSession {
         
         if let errorResponseHandler = resource.errorResponseHandler {
             
-            guard let errorData = HttpErrorData(responseCode: response.statusCode, data: data) else {
+            guard let errorData = HTTPErrorData(responseCode: response.statusCode, data: data) else {
                 fatalError("invalid Error response code")
             }
             

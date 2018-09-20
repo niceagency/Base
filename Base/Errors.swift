@@ -105,12 +105,12 @@ public enum URLComponentsTransformerError: ErrorType {
     }
 }
 
-public struct HttpErrorData {
+public struct HTTPErrorData {
     
     let responseCode: Int
     let data: Data?
     
-    init?( responseCode: Int, data: Data? ) {
+    init?(responseCode: Int, data: Data? ) {
         
         let validRange: ClosedRange = 400...599
         

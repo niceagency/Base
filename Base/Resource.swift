@@ -44,7 +44,7 @@ public struct Resource<A: Decodable> {
     public let query: [URLQueryItem]?
     public let headerProvider: HeaderProvider?
     
-    public let errorResponseHandler: ((HttpErrorData) -> Error?)?
+    public let errorResponseHandler: ((HTTPErrorData) -> Error?)?
     public let cancellationPolicy: CancellationPolicy
     public let decoder: ResultDecoder
     
@@ -53,7 +53,7 @@ public struct Resource<A: Decodable> {
                 query: [URLQueryItem]? = nil,
                 headerProvider: HeaderProvider? = nil,
                 cancellationPolicy: CancellationPolicy = .none,
-                errorResponseHandler: ((HttpErrorData) -> Error?)? = nil,
+                errorResponseHandler: ((HTTPErrorData) -> Error?)? = nil,
                 decoder: ResultDecoder = JSONDecoder()) {
         self.endpoint = endpoint
         self.method = method
