@@ -41,7 +41,12 @@ extension URLSession {
         var error: Error = NAError(type: NetworkError.httpError(response.statusCode))
         
         if let errorResponseHandler = resource.errorResponseHandler {
-            let responseError = errorResponseHandler(response.statusCode, data)
+            
+            guard let errorData = HTTPErrorData(responseCode: response.statusCode, data: data) else {
+                fatalError("invalid Error response code")
+            }
+            
+            let responseError = errorResponseHandler(errorData)
             
             if responseError != nil {
                 error = responseError!
