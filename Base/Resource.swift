@@ -38,14 +38,15 @@ public enum CancellationPolicy {
     case pattern(String)
 }
 
-public struct Resource<A> {
+public struct Resource<A: Decodable> {
     public let endpoint: String
     public let method: HttpMethod<Any>
     public let query: [URLQueryItem]?
     public let headerProvider: HeaderProvider?
-    public let parse: (Data) -> (Result<A>)
+    
     public let errorResponseHandler: ((Int, Data?) -> (Error?))?
     public let cancellationPolicy: CancellationPolicy
+    public let decoder: ResultDecoder
     
     public init(endpoint: String,
                 method: HttpMethod<Any> = .get(nil),
@@ -53,14 +54,28 @@ public struct Resource<A> {
                 headerProvider: HeaderProvider? = nil,
                 cancellationPolicy: CancellationPolicy = .none,
                 errorResponseHandler: ((Int, Data?) -> (Error?))? = nil,
-                parse: @escaping (Data) -> (Result<A>)) {
-        
+                decoder: ResultDecoder = JSONDecoder()) {
         self.endpoint = endpoint
         self.method = method
         self.query = query
         self.cancellationPolicy = cancellationPolicy
         self.headerProvider = headerProvider
         self.errorResponseHandler = errorResponseHandler
-        self.parse = parse
+        self.decoder = decoder
+    }
+    
+    func parse(_ data: Data, withDecoder: ResultDecoder) -> Result<A> {
+        do {
+            let parsedObject = try decoder.decode(A.self, from: data)
+            return .success(parsedObject)
+        } catch let error {
+            return .error(error)
+        }
     }
 }
+
+public protocol ResultDecoder {
+    func decode<A>( _ type: A.Type, from: Data) throws -> A where A: Decodable
+}
+
+extension JSONDecoder: ResultDecoder {}
