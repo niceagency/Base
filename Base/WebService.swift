@@ -95,7 +95,7 @@ extension URLSession {
             if let data = data {
                 BaseLog.network.log(.trace, "data to parse")
                 
-                let result = resource.parse(data)
+                let result = resource.parse( data, withDecoder: resource.decoder)
                 
                 switch result {
                 case .success(let value):

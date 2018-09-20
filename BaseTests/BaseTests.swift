@@ -8,6 +8,11 @@ struct TestObject: Codable, Equatable {
     let number: Int
 }
 
+struct CamelCaseTestObject: Codable, Equatable {
+    let keyOne: String
+    let keyTwo: Int
+}
+
 class BaseTests: XCTestCase {
     
     func testResourceIsParsable() {
@@ -15,19 +20,15 @@ class BaseTests: XCTestCase {
     let jsonString = """
     {"name":"test","number":1}
     """
-        
         guard let testObjectAsData = jsonString.data(using: .utf8) else {
             fatalError("failed to encode JSON string to data")
         }
         
         let resource = Resource<TestObject>(endpoint: "test")
-       
-        let decodedTestObject = resource.parse(testObjectAsData)
-        
+        let decodedTestObject = resource.parse(testObjectAsData, withDecoder: resource.decoder)
         let expectedObject = TestObject(name: "test", number: 1)
         
         switch decodedTestObject {
-            
         case .success(let object):
             XCTAssertEqual(object, expectedObject)
         case .error:
@@ -35,5 +36,53 @@ class BaseTests: XCTestCase {
         }
     }
     
+    func testDefaultDecoderWillFailWithIncorrectKeys() {
+        
+        let jsonString = """
+        {"key_one":"value1", "key_two": 2}
+        """
+        
+        guard let testObjectAsData = jsonString.data(using: .utf8) else {
+            fatalError("failed to encode JSON string to data")
+        }
+        
+        // using default decoder - should fail
+        let resource = Resource<CamelCaseTestObject>(endpoint: "test")
+        let decodedTestObject = resource.parse(testObjectAsData, withDecoder: resource.decoder)
     
+        switch decodedTestObject {
+        case .success:
+            XCTFail("should not have decode properly as keys are incorrect")
+        case .error:
+            XCTAssert(true, "as expected, didn't decode using default decoder")
+        }
+        
+    }
+    
+    func testResourceCanDecodeWithCustomDecoder() {
+        
+        let jsonString = """
+        {"key_one":"value1", "key_two": 2}
+        """
+        
+        guard let testObjectAsData = jsonString.data(using: .utf8) else {
+            fatalError("failed to encode JSON string to data")
+        }
+        
+        // using custom decoder
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        let resource = Resource<CamelCaseTestObject>(endpoint: "test", decoder: decoder)
+       
+        let decodedTestObject = resource.parse(testObjectAsData, withDecoder: resource.decoder)
+        let expectedObject = CamelCaseTestObject(keyOne: "value1", keyTwo: 2)
+        
+        switch decodedTestObject {
+        case .success(let object):
+            XCTAssertEqual(object, expectedObject)
+        case .error:
+            XCTFail("did not decode object")
+        }
+    }
 }
