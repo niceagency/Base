@@ -17,7 +17,7 @@ class BaseTests: XCTestCase {
     
     func testResourceIsParsable() {
         
-    let jsonString = """
+        let jsonString = """
     {"name":"test","number":1}
     """
         guard let testObjectAsData = jsonString.data(using: .utf8) else {
@@ -49,14 +49,10 @@ class BaseTests: XCTestCase {
         // using default decoder - should fail
         let resource = Resource<CamelCaseTestObject>(endpoint: "test")
         let decodedTestObject = resource.parse(testObjectAsData, withDecoder: resource.decoder)
-    
-        switch decodedTestObject {
-        case .success:
-            XCTFail("should not have decode properly as keys are incorrect")
-        case .error:
-            XCTAssert(true, "as expected, didn't decode using default decoder")
-        }
         
+        if case let Result.error(error) = decodedTestObject {
+            XCTAssertTrue(error is DecodingError, "failed to decode as keys are missing")
+        }
     }
     
     func testResourceCanDecodeWithCustomDecoder() {
@@ -74,7 +70,7 @@ class BaseTests: XCTestCase {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         
         let resource = Resource<CamelCaseTestObject>(endpoint: "test", decoder: decoder)
-       
+        
         let decodedTestObject = resource.parse(testObjectAsData, withDecoder: resource.decoder)
         let expectedObject = CamelCaseTestObject(keyOne: "value1", keyTwo: 2)
         
