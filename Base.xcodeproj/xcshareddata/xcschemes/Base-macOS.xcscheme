@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B06A5D021E4386AC00DAFF6B"
-               BuildableName = "Base.framework"
-               BlueprintName = "Base"
+               BlueprintIdentifier = "9AB7DFC52178E871007F16F8"
+               BuildableName = "Base_macOS.framework"
+               BlueprintName = "Base-macOS"
                ReferencedContainer = "container:Base.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,26 +28,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0E2B705A2152575300255638"
-               BuildableName = "BaseTests.xctest"
-               BlueprintName = "BaseTests"
-               ReferencedContainer = "container:Base.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B06A5D021E4386AC00DAFF6B"
-            BuildableName = "Base.framework"
-            BlueprintName = "Base"
-            ReferencedContainer = "container:Base.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -64,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B06A5D021E4386AC00DAFF6B"
-            BuildableName = "Base.framework"
-            BlueprintName = "Base"
+            BlueprintIdentifier = "9AB7DFC52178E871007F16F8"
+            BuildableName = "Base_macOS.framework"
+            BlueprintName = "Base-macOS"
             ReferencedContainer = "container:Base.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -82,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B06A5D021E4386AC00DAFF6B"
-            BuildableName = "Base.framework"
-            BlueprintName = "Base"
+            BlueprintIdentifier = "9AB7DFC52178E871007F16F8"
+            BuildableName = "Base_macOS.framework"
+            BlueprintName = "Base-macOS"
             ReferencedContainer = "container:Base.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

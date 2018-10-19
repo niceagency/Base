@@ -4,10 +4,8 @@
 
 Base is a general purpose library providing a number of the basic needs of most apps, suitable as the beginnings of a project. Base covers:
 - Logging
-- Network reachability
 - Networking
 - CoreData storage
-- Outline coordination (flow control) support
 - Auto-layout convenience
 - Support for networked test data supply
 
