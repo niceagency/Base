@@ -78,7 +78,7 @@
 		875D0C88203F16F600B57A89 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		87802F94203B412500A0BC85 /* NetworkTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTransformers.swift; sourceTree = "<group>"; };
 		87802F97203C3E4A00A0BC85 /* TestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
-		9AB7DFC62178E871007F16F8 /* Base_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9AB7DFC62178E871007F16F8 /* Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AB7DFE32179D675007F16F8 /* Log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Log.framework; path = Carthage/Build/Mac/Log.framework; sourceTree = "<group>"; };
 		B06A5D031E4386AC00DAFF6B /* Base-iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Base-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B06A5D071E4386AC00DAFF6B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -158,7 +158,7 @@
 			children = (
 				B06A5D031E4386AC00DAFF6B /* Base-iOS.framework */,
 				0E2B705B2152575300255638 /* BaseTests.xctest */,
-				9AB7DFC62178E871007F16F8 /* Base_macOS.framework */,
+				9AB7DFC62178E871007F16F8 /* Base.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -341,7 +341,7 @@
 			);
 			name = "Base-macOS";
 			productName = Base;
-			productReference = 9AB7DFC62178E871007F16F8 /* Base_macOS.framework */;
+			productReference = 9AB7DFC62178E871007F16F8 /* Base.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B06A5D021E4386AC00DAFF6B /* Base-iOS */ = {
@@ -625,7 +625,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = agency.nice.Base;
 				PRODUCT_MODULE_NAME = Base;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = Base;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -661,7 +661,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = agency.nice.Base;
 				PRODUCT_MODULE_NAME = Base;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = Base;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
