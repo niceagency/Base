@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9AB7DFC52178E871007F16F8"
-               BuildableName = "Base_macOS.framework"
+               BuildableName = "Base.framework"
                BlueprintName = "Base-macOS"
                ReferencedContainer = "container:Base.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9AB7DFC52178E871007F16F8"
-            BuildableName = "Base_macOS.framework"
+            BuildableName = "Base.framework"
             BlueprintName = "Base-macOS"
             ReferencedContainer = "container:Base.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9AB7DFC52178E871007F16F8"
-            BuildableName = "Base_macOS.framework"
+            BuildableName = "Base.framework"
             BlueprintName = "Base-macOS"
             ReferencedContainer = "container:Base.xcodeproj">
          </BuildableReference>

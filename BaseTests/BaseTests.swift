@@ -3,12 +3,12 @@
 import XCTest
 @testable import Base
 
-struct TestObject: Codable, Equatable {
+struct TestObject: Codable, Equatable, HttpData {
     let name: String
     let number: Int
 }
 
-struct CamelCaseTestObject: Codable, Equatable {
+struct CamelCaseTestObject: Codable, Equatable, HttpData {
     let keyOne: String
     let keyTwo: Int
 }
@@ -80,5 +80,50 @@ class BaseTests: XCTestCase {
         case .error:
             XCTFail("did not decode object")
         }
+    }
+    
+    func testHTTPMethodCanEncodeData() {
+        let encoder = JSONEncoder()
+        let testObject = TestObject(name: "1", number: 3)
+        let jsonData = try? encoder.encode(testObject)
+        let resource = Resource<TestObject>(endpoint: "/",
+                                            method: HttpMethod.post(jsonData))
+        
+        let request = URLRequest(resource: resource,
+                                 baseURL: URL(fileURLWithPath: ""),
+                                 additionalHeaders: [],
+                                 requestBehaviour: EmptyRequestBehavior())
+        
+        XCTAssertNotNil(request)
+        XCTAssertNotNil(request?.httpBody)
+        XCTAssertEqual(request?.httpBody, jsonData)
+    }
+    
+    func testHTTPMethodCanEncodeCodableObject() {
+        let testObject = TestObject(name: "1", number: 3)
+        let resource = Resource<TestObject>(endpoint: "/",
+                                            method: HttpMethod.post(testObject))
+        
+        let request = URLRequest(resource: resource,
+                                 baseURL: URL(fileURLWithPath: ""),
+                                 additionalHeaders: [],
+                                 requestBehaviour: EmptyRequestBehavior())
+        
+        XCTAssertNotNil(request)
+        XCTAssertNotNil(request?.httpBody)
+    }
+    
+    func testHTTPMethodCanEncodeDictionaryObject() {
+        let testObject = ["1": 3]
+        let resource = Resource<TestObject>(endpoint: "/",
+                                            method: HttpMethod.post(testObject))
+        
+        let request = URLRequest(resource: resource,
+                                 baseURL: URL(fileURLWithPath: ""),
+                                 additionalHeaders: [],
+                                 requestBehaviour: EmptyRequestBehavior())
+        
+        XCTAssertNotNil(request)
+        XCTAssertNotNil(request?.httpBody)
     }
 }

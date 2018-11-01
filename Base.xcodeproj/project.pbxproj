@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E2B705E2152575300255638 /* BaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2B705D2152575300255638 /* BaseTests.swift */; };
-		0E2B70602152575300255638 /* Base-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D031E4386AC00DAFF6B /* Base-iOS.framework */; };
+		0E2B70602152575300255638 /* Base.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B06A5D031E4386AC00DAFF6B /* Base.framework */; };
 		0E2B707E21526FE200255638 /* Log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = B06A5D111E438FB200DAFF6B /* Log.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		875D0C89203F16F600B57A89 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 875D0C88203F16F600B57A89 /* Types.swift */; };
 		87802F95203B412500A0BC85 /* NetworkTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87802F94203B412500A0BC85 /* NetworkTransformers.swift */; };
@@ -80,7 +80,7 @@
 		87802F97203C3E4A00A0BC85 /* TestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
 		9AB7DFC62178E871007F16F8 /* Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AB7DFE32179D675007F16F8 /* Log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Log.framework; path = Carthage/Build/Mac/Log.framework; sourceTree = "<group>"; };
-		B06A5D031E4386AC00DAFF6B /* Base-iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Base-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B06A5D031E4386AC00DAFF6B /* Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B06A5D071E4386AC00DAFF6B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B06A5D0F1E4389EF00DAFF6B /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		B06A5D111E438FB200DAFF6B /* Log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Log.framework; path = Carthage/Build/iOS/Log.framework; sourceTree = "<group>"; };
@@ -108,7 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E2B70602152575300255638 /* Base-iOS.framework in Frameworks */,
+				0E2B70602152575300255638 /* Base.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +156,7 @@
 		B06A5D041E4386AC00DAFF6B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B06A5D031E4386AC00DAFF6B /* Base-iOS.framework */,
+				B06A5D031E4386AC00DAFF6B /* Base.framework */,
 				0E2B705B2152575300255638 /* BaseTests.xctest */,
 				9AB7DFC62178E871007F16F8 /* Base.framework */,
 			);
@@ -360,7 +360,7 @@
 			);
 			name = "Base-iOS";
 			productName = Base;
-			productReference = B06A5D031E4386AC00DAFF6B /* Base-iOS.framework */;
+			productReference = B06A5D031E4386AC00DAFF6B /* Base.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -803,7 +803,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = agency.nice.Base;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Base;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
@@ -830,7 +830,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = agency.nice.Base;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Base;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
 			};

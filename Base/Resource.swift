@@ -8,12 +8,46 @@
 
 import Foundation
 
-public enum HttpMethod<Body> {
-    case get(Body?)
-    case post(Body?)
-    case put(Body?)
-    case patch(Body?)
-    case delete(Body?)
+public protocol HttpData {
+    func encoded() -> Data?
+}
+
+extension HttpData where Self: Encodable {
+    func encoded() -> Data? {
+        let encoder = JSONEncoder()
+        
+        return try? encoder.encode(self)
+    }
+}
+
+extension Data: HttpData {
+    public func encoded() -> Data? {
+        return self
+    }
+}
+
+extension Dictionary: HttpData where Key: Encodable, Value: Encodable {
+    public func encoded() -> Data? {
+        let encoder = JSONEncoder()
+        
+        return try? encoder.encode(self)
+    }
+}
+
+extension Array: HttpData where Element: Encodable {
+    public func encoded() -> Data? {
+        let encoder = JSONEncoder()
+        
+        return try? encoder.encode(self)
+    }
+}
+
+public enum HttpMethod {
+    case get(HttpData?)
+    case post(HttpData?)
+    case put(HttpData?)
+    case patch(HttpData?)
+    case delete(HttpData?)
     
     var name: String {
         switch self {
@@ -40,7 +74,7 @@ public enum CancellationPolicy {
 
 public struct Resource<A: Decodable> {
     public let endpoint: String
-    public let method: HttpMethod<Any>
+    public let method: HttpMethod
     public let query: [URLQueryItem]?
     public let headerProvider: HeaderProvider?
     
@@ -49,7 +83,7 @@ public struct Resource<A: Decodable> {
     public let decoder: ResultDecoder
     
     public init(endpoint: String,
-                method: HttpMethod<Any> = .get(nil),
+                method: HttpMethod = .get(nil),
                 query: [URLQueryItem]? = nil,
                 headerProvider: HeaderProvider? = nil,
                 cancellationPolicy: CancellationPolicy = .none,

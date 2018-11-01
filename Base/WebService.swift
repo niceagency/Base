@@ -219,39 +219,6 @@ fileprivate extension Resource {
     }
 }
 
-fileprivate extension HttpMethod {
-    
-    func map<B>(serialize: (Body) -> B) -> HttpMethod<B> {
-        switch self {
-        case .get(let body):
-            if let body = body {
-                return .get(serialize(body))
-            }
-            return .get(nil)
-        case .post(let body):
-            if let body = body {
-                return .post(serialize(body))
-            }
-            return .post(nil)
-        case .put(let body):
-            if let body = body {
-                return .put(serialize(body))
-            }
-            return .put(nil)
-        case .delete(let body):
-            if let body = body {
-                return .delete(serialize(body))
-            }
-            return .delete(nil)
-        case .patch(let body):
-            if let body = body {
-                return .patch(serialize(body))
-            }
-            return .patch(nil)
-        }
-    }
-}
-
 fileprivate extension CancellationPolicy {
     func matches(url: URL, with: URL) -> Bool {
         var cancel: ((URL, URL) -> Bool)!
@@ -283,7 +250,7 @@ fileprivate extension CancellationPolicy {
     }
 }
 
-fileprivate extension URLRequest {
+internal extension URLRequest {
     init?<A>(resource: Resource<A>, baseURL: URL, additionalHeaders: [(String, String)], requestBehaviour: RequestBehavior) {
         
         guard let url = requestBehaviour.modify(urlComponents: resource.urlComponents(for: baseURL)).url else {
@@ -292,32 +259,21 @@ fileprivate extension URLRequest {
         
         self.init(url: url)
         
-        let method = resource.method.map { input -> Data in
-            
-            if let input = input as? Data {
-                return input
-            }
-            
-            if let jsonData = try? JSONSerialization.data(withJSONObject: input, options: []) {
-                return jsonData
-            }
-            
-            fatalError("Unhandled input provided to HTTPMethod - \(input)")
-        }
+        let method = resource.method
         
         httpMethod = method.name
         
         switch method {
         case let .get(data):
-            httpBody = data
+            httpBody = data?.encoded()
         case let .post(data):
-            httpBody = data
+            httpBody = data?.encoded()
         case let .put(data):
-            httpBody = data
+            httpBody = data?.encoded()
         case let .delete(data):
-            httpBody = data
+            httpBody = data?.encoded()
         case let .patch(data):
-            httpBody = data
+            httpBody = data?.encoded()
         }
         
         let headers = resource.headerProvider?.headers() ?? [] + additionalHeaders
