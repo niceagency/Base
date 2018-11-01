@@ -12,7 +12,7 @@ public protocol HttpData {
     func encoded() -> Data?
 }
 
-extension HttpData where Self: Encodable {
+public extension HttpData where Self: Encodable {
     func encoded() -> Data? {
         let encoder = JSONEncoder()
         
