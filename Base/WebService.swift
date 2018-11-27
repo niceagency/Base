@@ -276,7 +276,7 @@ internal extension URLRequest {
             httpBody = data?.encoded()
         }
         
-        let headers = resource.headerProvider?.headers() ?? [] + additionalHeaders
+        let headers = (resource.headerProvider?.headers() ?? []) + additionalHeaders
         
         for (header, value) in headers {
             addValue(value, forHTTPHeaderField: header)
