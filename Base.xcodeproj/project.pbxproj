@@ -353,6 +353,7 @@
 				B06A5D001E4386AC00DAFF6B /* Headers */,
 				B06A5D011E4386AC00DAFF6B /* Resources */,
 				87802F96203C345900A0BC85 /* Swift Lint */,
+				0E22A0B32154FC0A00A4A72F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -434,6 +435,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0E22A0B32154FC0A00A4A72F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Log.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Reachability.framework",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+		};
 		87802F96203C345900A0BC85 /* Swift Lint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
