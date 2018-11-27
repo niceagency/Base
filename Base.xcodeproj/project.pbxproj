@@ -444,7 +444,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Log.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Reachability.framework",
 			);
 			outputFileListPaths = (
 			);
