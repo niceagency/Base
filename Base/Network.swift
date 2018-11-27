@@ -7,47 +7,8 @@
 //
 
 import Foundation
-import Reachability
 
 public struct Network {
-    
-    public struct ReachabilityTester {
-        public static let shared: Reachability? = {
-            let reachability = Reachability(hostname: "google.com")
-            
-            if let tester = reachability {
-                tester.whenReachable = { _ in
-                    DispatchQueue.main.async {
-                        BaseLog.network.log(.trace, "Network is reachable")
-                        Network.ReachabilityTester.isReachable = true
-                    }
-                }
-                tester.whenUnreachable = { _ in
-                    DispatchQueue.main.async {
-                        BaseLog.network.log(.trace, "Network is NOT reachable")
-                        Network.ReachabilityTester.isReachable = false
-                    }
-                }
-                
-                do {
-                    try tester.startNotifier()
-                } catch {
-                    BaseLog.network.log(.error, "Unable to start reachability notifier: \(error)")
-                }
-                
-                Network.ReachabilityTester.isReachable = tester.connection != .none
-            } else {
-                Network.ReachabilityTester.isReachable = true
-            }
-            
-            return reachability
-        }()
-        public static private(set) var isReachable = false
-        
-        public static func beginSharedReachabilityMonitoring() {
-            _ = shared
-        }
-    }
     
     public struct Webservices {
         private static var webservices: [String: Webservice] = [:]
