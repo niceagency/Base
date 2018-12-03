@@ -107,8 +107,8 @@ public enum URLComponentsTransformerError: ErrorType {
 
 public struct HTTPErrorData {
     
-    let responseCode: Int
-    let data: Data?
+    public let responseCode: Int
+    public let data: Data?
     
     init?(responseCode: Int, data: Data? ) {
         

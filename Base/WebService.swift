@@ -31,14 +31,16 @@ extension NSError {
 
 extension URLSession {
     
-    private func handleErrorFor<A>(
+    private func handleErrorFor<A>( //swiftlint:disable:this function_parameter_count
+        error: Error?,
         data: Data?,
         request: URLRequest,
         response: HTTPURLResponse,
         resource: Resource<A>,
         callbacks: DataTaskCallback<A>) {
         // Default to an HTTP error in case caller did not provide a response error handler
-        var error: Error = NAError(type: NetworkError.httpError(response.statusCode))
+        var error: Error = NAError(type: NetworkError.httpError(response.statusCode),
+                                   internalError: error)
         
         if let errorResponseHandler = resource.errorResponseHandler {
             
@@ -46,10 +48,8 @@ extension URLSession {
                 fatalError("invalid Error response code")
             }
             
-            let responseError = errorResponseHandler(errorData)
-            
-            if responseError != nil {
-                error = responseError!
+            if let responseError = errorResponseHandler(errorData) {
+                error = responseError
             }
         }
         
@@ -88,7 +88,8 @@ extension URLSession {
                 let statusCode = response.statusCode
                 
                 if !Webservice.ResponseCodes.valid.contains(statusCode) {
-                    self.handleErrorFor(data: data,
+                    self.handleErrorFor(error: error,
+                                        data: data,
                                         request: request,
                                         response: response,
                                         resource: resource,
