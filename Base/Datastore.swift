@@ -48,7 +48,7 @@ public final class Datastore {
                 BaseLog.coreData.log(.trace, "Adding store at \(documentURL)")
                 
                 do {
-                    try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: nil)
+                    try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: documentURL, options: [NSMigratePersistentStoresAutomaticallyOption: NSNumber(value: true)])
                 } catch {
                     BaseLog.coreData.log(.error, "Error trying to load the store: \(error)\nDeleting and starting fresh...")
                     
