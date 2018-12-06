@@ -15,6 +15,7 @@ public protocol UnauthorizedResponseHandler {
 struct DataTaskCallback<A> {
     let success: (URLResponse?, A) -> Void
     let failure: (Error) -> Void
+    let networkFailure: (NAError<NetworkError>) -> Void
     let retry: () -> Void
     var unauthorizedResponseHandler: UnauthorizedResponseHandler?
 }
@@ -26,6 +27,10 @@ extension NSError {
     
     fileprivate func isNoConnectivityError() -> Bool {
         return self.domain == NSURLErrorDomain && self.code == NSURLErrorNotConnectedToInternet
+    }
+
+    fileprivate func isTimeoutError() -> Bool {
+        return self.domain == NSURLErrorDomain && self.code == NSURLErrorTimedOut
     }
 }
 
@@ -76,10 +81,10 @@ extension URLSession {
                     return
                 }
                 
-                if error.isNoConnectivityError() {
+                if error.isNoConnectivityError() || error.isTimeoutError() {
                     let failingURL = error.userInfo[NSURLErrorFailingURLStringErrorKey] ?? "Unknown URL"
                     BaseLog.network.log(.trace, "No connectivity available for request: \(failingURL)")
-                    callbacks.failure(NAError(type: NetworkError.noConnection(error.code, "\(failingURL)")))
+                    callbacks.networkFailure(NAError(type: NetworkError.noConnection(error.code, "\(failingURL)")))
                     return
                 }
             }
@@ -142,8 +147,9 @@ public final class Webservice {
         self.defaultHeaders = defaultHeaders
     }
     
-    public func request<A>(_ resource: Resource<A>,
+    public func request<A>(_ resource: Resource<A>, //swiftlint:disable:this function_body_length
                            withBehavior additionalBehavior: RequestBehavior? = nil,
+                           networkFailure: ((NAError<NetworkError>) -> Void)? = nil,
                            completion: @escaping (Result<A>) -> Void) {
         
         let behavior = self.behavior.adding(additionalBehavior ?? EmptyRequestBehavior())
@@ -195,12 +201,20 @@ public final class Webservice {
                 behavior.after(failure: error, retry: retry)
             }
         }
+
+        let networkError: ((NAError<NetworkError>) -> Void) = { error in
+            DispatchQueue.main.async {
+                networkFailure?(error)
+                behavior.after(failure: error, retry: retry)
+            }
+        }
         
         let task = session.resourceDataTask(request: request,
                                             resource: resource,
                                             behavior: behavior,
                                             callbacks: DataTaskCallback(success: success,
                                                                         failure: failure,
+                                                                        networkFailure: networkError,
                                                                         retry: retry,
                                                                         unauthorizedResponseHandler: unauthorizedResponseHandler))
         task.resume()
