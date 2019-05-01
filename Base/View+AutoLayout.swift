@@ -37,15 +37,18 @@ public protocol Constrainable {
     @available(iOS 11.0, *)
     var safeAreaLayoutGuide: UILayoutGuide { get }
     #endif
-    
+
+    #if os(iOS)
     func centerIn(_ other: Constrainable, offsetBy offset: UIOffset) -> [NSLayoutConstraint]
     func alignEdgesTo(_ other: Constrainable, insetBy insets: UIEdgeInsets) -> [NSLayoutConstraint]
+    #endif
+
     func aspectRatio (_  ratio: CGFloat) -> [NSLayoutConstraint]
 }
 public typealias ConstrainedSuperview = Constrainable
 
 extension Constrainable {
-   
+   #if os(iOS)
     public func centerIn(_ other: Constrainable, offsetBy offset: UIOffset = UIOffset.zero) -> [NSLayoutConstraint] {
         return [
             self.centerYAnchor.constraint(equalTo: other.centerYAnchor, constant: offset.vertical),
@@ -62,6 +65,7 @@ extension Constrainable {
             self.bottomAnchor.constraint(equalTo: other.bottomAnchor, constant: insets.bottom)
         ]
     }
+    #endif
     
     public func aspectRatio(_  ratio: CGFloat) -> [NSLayoutConstraint] {
     
