@@ -159,8 +159,7 @@ final class StubURLSessionDataTask: URLSessionDataTask {
             let parts = payloadFileName.split(separator: ".")
             
             guard let url = Bundle.main.url(forResource: String(parts[0]),
-                                            withExtension: String(parts[1]),
-                                            subdirectory: "TestStubDataFiles") else {
+                                            withExtension: String(parts[1])) else {
                                                 let message = "Invalid path for test payload file '\(payloadFileName)'"
                                                 BaseLog.testSupport.log(.error, message)
                                                 fatalError(message)
