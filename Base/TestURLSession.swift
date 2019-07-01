@@ -173,8 +173,6 @@ final class StubURLSessionDataTask: URLSessionDataTask {
         var data: Data?
 
         if let payloadFileName = responseStub.payloadFileName {
-
-
             data = dataFor(payloadFileName: payloadFileName)
 
         } else if responseStub.payloadFileNames.indices.contains(callNumber) {
