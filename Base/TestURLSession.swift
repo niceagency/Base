@@ -26,16 +26,22 @@ public struct URLResponseStub {
     public let statusCode: Int
     public let headers: [String: String]?
     public let payloadFileNames: [String]
-    public let payloadFileName: String?
+
+    public init(statusCode: Int, headers: [String: String]?, payloadFileName: String?) {
+        if let payloadFileName = payloadFileName {
+            self.init(statusCode: statusCode, headers: headers, payloadFileNames: [payloadFileName])
+        }
+        else {
+            self.init(statusCode: statusCode, headers: headers, payloadFileNames: [])
+        }
+    }
     
     public init(statusCode: Int,
                 headers: [String: String]?,
-                payloadFileNames: [String] = [],
-                payloadFileName: String? = nil ) {
+                payloadFileNames: [String] = []) {
         self.statusCode = statusCode
         self.headers = headers
         self.payloadFileNames = payloadFileNames
-        self.payloadFileName = payloadFileName
     }
 } 
 
@@ -170,16 +176,16 @@ final class StubURLSessionDataTask: URLSessionDataTask {
     }
     
     override func resume() {
-        var data: Data?
-
-        if let payloadFileName = responseStub.payloadFileName {
-            data = dataFor(payloadFileName: payloadFileName)
-
-        } else if responseStub.payloadFileNames.indices.contains(callNumber) {
+        if responseStub.payloadFileNames.indices.contains(callNumber) {
             let payloadFileName = responseStub.payloadFileNames[callNumber]
-            data = dataFor(payloadFileName: payloadFileName)
+            let data = dataFor(payloadFileName: payloadFileName)
+            handler(data ?? "".data(using: .utf8), self.stubURLResponse, nil)
+        } else {
+            let message = "call at index \(callNumber)Exceeded expected call count for endpoint \(stubURLResponse.url!)"
+            BaseLog.testSupport.log(.error, message)
+            fatalError(message)
         }
-        handler(data ?? "".data(using: .utf8), self.stubURLResponse, nil)
+
     }
 }
 
@@ -297,38 +303,26 @@ extension URLMatch: EnvironmentRepresentable {
 extension URLResponseStub: EnvironmentRepresentable {
     init(environmentRepresentation rep: [String: Any]) {
         guard let statusCode = rep["statusCode"] as? Int,
-            let headers = rep["headers"] as? [String: String] else {
+            let payloadFileNames = rep["payloadFileNames"] as? [String],
+            let headers = rep["headers"] as? [String: String]
+            else {
                 fatalError("Environment representation invalid: \(rep)")
             }
         
         self.statusCode = statusCode
         self.headers = headers
-        if let payloadFileName = rep["payloadFileName"] as? String {
-            self.payloadFileName = payloadFileName
-            self.payloadFileNames = []
-        } else if let payloadFileNames = rep["payloadFileNames"] as? [String] {
-            self.payloadFileName = nil
-            self.payloadFileNames = payloadFileNames
-        } else {
-            fatalError("Environment representation invalid: \(rep)")
-        }
+        self.payloadFileNames = payloadFileNames
     }
     
     func environmentRepresentation() -> [String: Any] {
         var rep: [String: Any] = [
             "statusCode": statusCode,
+            "payloadFileNames": payloadFileNames
         ]
         
         if let headers = headers {
             rep["headers"] = headers
         }
-
-        if let payloadFileName = payloadFileName {
-            rep["payloadFileName"] = payloadFileName
-        } else {
-            rep["payloadFileNames"] = payloadFileNames
-        }
-
         return rep
     }
 }
