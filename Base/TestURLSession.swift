@@ -25,12 +25,23 @@ public struct URLMatch {
 public struct URLResponseStub {
     public let statusCode: Int
     public let headers: [String: String]?
-    public let payloadFileName: String?
-    
+    public let payloadFileNames: [String]
+
     public init(statusCode: Int, headers: [String: String]?, payloadFileName: String?) {
+        if let payloadFileName = payloadFileName {
+            self.init(statusCode: statusCode, headers: headers, payloadFileNames: [payloadFileName])
+        }
+        else {
+            self.init(statusCode: statusCode, headers: headers, payloadFileNames: [])
+        }
+    }
+    
+    public init(statusCode: Int,
+                headers: [String: String]?,
+                payloadFileNames: [String] = []) {
         self.statusCode = statusCode
         self.headers = headers
-        self.payloadFileName = payloadFileName
+        self.payloadFileNames = payloadFileNames
     }
 } 
 
@@ -135,47 +146,53 @@ final class StubURLSessionDataTask: URLSessionDataTask {
     
     let responseStub: URLResponseStub
     let handler: (Data?, URLResponse?, Error?) -> Void
-    
+    let callNumber: Int
     private let stubURLResponse: URLResponse
     
     override var response: URLResponse? {
         return stubURLResponse
     }
     
-    init(url: URL, response responseStub: URLResponseStub, handler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    init(url: URL, callNumber: Int, response responseStub: URLResponseStub, handler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         self.responseStub = responseStub
         self.handler = handler
-        
+        self.callNumber = callNumber
         self.stubURLResponse = HTTPURLResponse(url: url,
                                                statusCode: responseStub.statusCode,
                                                httpVersion: "1.1",
                                                headerFields: responseStub.headers)!
     }
+
+    private func dataFor(payloadFileName: String) -> Data? {
+        let parts = payloadFileName.split(separator: ".")
+
+        guard let url = Bundle.main.url(forResource: String(parts[0]),
+                                        withExtension: String(parts[1])) else {
+                                            let message = "Invalid path for test payload file '\(payloadFileName)'"
+                                            BaseLog.testSupport.log(.error, message)
+                                            fatalError(message)
+        }
+        return try? Data(contentsOf: url)
+    }
     
     override func resume() {
-        var data: Data?
-        
-        if let payloadFileName = self.responseStub.payloadFileName {
-            let parts = payloadFileName.split(separator: ".")
-            
-            guard let url = Bundle.main.url(forResource: String(parts[0]),
-                                            withExtension: String(parts[1]),
-                                            subdirectory: "TestStubDataFiles") else {
-                                                let message = "Invalid path for test payload file '\(payloadFileName)'"
-                                                BaseLog.testSupport.log(.error, message)
-                                                fatalError(message)
-            }
-            
-            data = try? Data(contentsOf: url)
+        if responseStub.payloadFileNames.indices.contains(callNumber) {
+            let payloadFileName = responseStub.payloadFileNames[callNumber]
+            let data = dataFor(payloadFileName: payloadFileName)
+            handler(data ?? "".data(using: .utf8), self.stubURLResponse, nil)
+        } else {
+            let message = "call at index \(callNumber)Exceeded expected call count for endpoint \(stubURLResponse.url!)"
+            BaseLog.testSupport.log(.error, message)
+            fatalError(message)
         }
-        
-        handler(data ?? "".data(using: .utf8), self.stubURLResponse, nil)
+
     }
 }
 
 final class TestURLSession: URLSession {
     
     private let testMapping: TestURLSessionConfiguration
+    private var callCount: [URL: Int] = [:]
     
     init(testMapping: TestURLSessionConfiguration) {
         self.testMapping = testMapping
@@ -188,8 +205,13 @@ final class TestURLSession: URLSession {
     override func dataTask(with request: URLRequest,
                            completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         let url = request.url!
+        let callNumber = callCount[url] ?? 0
         let stubResponse = testMapping.config(matchingURLRequest: request)
-        let task = StubURLSessionDataTask(url: url, response: stubResponse, handler: completionHandler)
+        let task = StubURLSessionDataTask(url: url,
+                                          callNumber: callNumber,
+                                          response: stubResponse,
+                                          handler: completionHandler)
+        callCount[url] = callNumber + 1
         return task
     }
 }
@@ -281,29 +303,26 @@ extension URLMatch: EnvironmentRepresentable {
 extension URLResponseStub: EnvironmentRepresentable {
     init(environmentRepresentation rep: [String: Any]) {
         guard let statusCode = rep["statusCode"] as? Int,
-            let headers = rep["headers"] as? [String: String],
-            let payloadFileName = rep["payloadFileName"] as? String else {
+            let payloadFileNames = rep["payloadFileNames"] as? [String],
+            let headers = rep["headers"] as? [String: String]
+            else {
                 fatalError("Environment representation invalid: \(rep)")
-        }
+            }
         
         self.statusCode = statusCode
         self.headers = headers
-        self.payloadFileName = payloadFileName
+        self.payloadFileNames = payloadFileNames
     }
     
     func environmentRepresentation() -> [String: Any] {
         var rep: [String: Any] = [
-            "statusCode": statusCode
+            "statusCode": statusCode,
+            "payloadFileNames": payloadFileNames
         ]
         
         if let headers = headers {
             rep["headers"] = headers
         }
-        
-        if let payloadFileName = payloadFileName {
-            rep["payloadFileName"] = payloadFileName
-        }
-        
         return rep
     }
 }
