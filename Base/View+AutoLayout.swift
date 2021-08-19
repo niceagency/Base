@@ -100,7 +100,7 @@ extension Array: ActivateableConstraint where Element: ActivateableConstraint {
 public typealias ConstraintExpression = (_ make: Constrainable, _ superview: ConstrainedSuperview) -> [ActivateableConstraint]
 
 public extension View {
-    public func constrain(by constrain: ConstraintExpression) {
+    func constrain(by constrain: ConstraintExpression) {
         guard let superview = self.superview else {
             assertionFailure("Views need to have a superview to be constrained")
             return

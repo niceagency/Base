@@ -30,8 +30,7 @@ public struct URLResponseStub {
     public init(statusCode: Int, headers: [String: String]?, payloadFileName: String?) {
         if let payloadFileName = payloadFileName {
             self.init(statusCode: statusCode, headers: headers, payloadFileNames: [payloadFileName])
-        }
-        else {
+        } else {
             self.init(statusCode: statusCode, headers: headers, payloadFileNames: [])
         }
     }
@@ -230,8 +229,9 @@ func ==<T: Equatable>(lhs: [T]?, rhs: [T]?) -> Bool {
 }
 
 extension URLMatch: Hashable {
-    public var hashValue: Int {
-        return host.hashValue ^ path.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(host)
+        hasher.combine(path)
     }
     
     public static func == (lhs: URLMatch, rhs: URLMatch) -> Bool {

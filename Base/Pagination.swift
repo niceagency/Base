@@ -16,7 +16,7 @@ public protocol PaginatedContent {
     init(data: Data, contents: ResourceItemType?)
 }
 
-/**
+/*
 Example of how pagination might be used as a wrapper around a resource
  
 public extension Resource {

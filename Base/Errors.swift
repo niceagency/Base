@@ -57,11 +57,11 @@ public enum NetworkError: ErrorType {
     
     public var code: Int {
         switch self {
-        case .httpError(let status):
+        case let .httpError(status):
             return status
         case .authenticationError:
             return 401
-        case .noConnection(let (code, _)):
+        case let.noConnection(code, _):
             return code
         case .malformedURL:
             return 13003
@@ -70,11 +70,11 @@ public enum NetworkError: ErrorType {
     
     public var description: String {
         switch self {
-        case .httpError(let status):
+        case let .httpError(status):
             return "Request failed with HTTP status: \(status)"
         case .authenticationError:
             return "Authentication details were rejected"
-        case .noConnection(let (_, url)):
+        case let .noConnection(_, url):
             return "No connection available for request to \(url)"
         case .malformedURL:
             return "URL in request is malformed"

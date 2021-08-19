@@ -57,11 +57,11 @@ public extension BaseDomain {
         (domain: .testSupport, level: .none, logger: nil)
         ])
     
-    public func log<T>(_ level: BaseLevel,
-                       _ object: T,
-                       filename: String = #file,
-                       line: Int = #line,
-                       funcname: String = #function) {
+    func log<T>(_ level: BaseLevel,
+                _ object: T,
+                filename: String = #file,
+                line: Int = #line,
+                funcname: String = #function) {
         let logger = BaseDomain.logStore.log(self)
         
         logger.log(level, object, filename: filename, line: line, funcname: funcname)

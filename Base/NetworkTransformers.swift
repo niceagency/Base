@@ -9,7 +9,7 @@
 import Foundation
 
 public extension URLRequest {
-    public func appending(headers: [(String, String)]) -> URLRequest {
+    func appending(headers: [(String, String)]) -> URLRequest {
         
         var copy = self
         headers.forEach { header, value in
@@ -19,7 +19,7 @@ public extension URLRequest {
         return copy
     }
     
-    public func modifying(cachePolicy: NSURLRequest.CachePolicy) -> URLRequest {
+    func modifying(cachePolicy: NSURLRequest.CachePolicy) -> URLRequest {
         var copy = self
         copy.cachePolicy = cachePolicy
         return copy
@@ -27,38 +27,38 @@ public extension URLRequest {
 }
 
 public extension URLComponents {
-    public func replacing(queryItems: [URLQueryItem]?) -> URLComponents {
+    func replacing(queryItems: [URLQueryItem]?) -> URLComponents {
         var copy = self
         copy.queryItems = queryItems
         return copy
     }
     
-    public func appending(queryItems: [URLQueryItem]) -> URLComponents {
+    func appending(queryItems: [URLQueryItem]) -> URLComponents {
         var copy = self
         let existingQueryItems = self.queryItems ?? []
         copy.queryItems = existingQueryItems + queryItems
         return copy
     }
     
-    public func modifying(scheme: String?) -> URLComponents {
+    func modifying(scheme: String?) -> URLComponents {
         var copy = self
         copy.scheme = scheme
         return copy
     }
     
-    public func modifying(port: Int?) -> URLComponents {
+    func modifying(port: Int?) -> URLComponents {
         var copy = self
         copy.port = port
         return copy
     }
     
-    public func modifying(path: String) -> URLComponents {
+    func modifying(path: String) -> URLComponents {
         var copy = self
         copy.path = path
         return copy
     }
     
-    public func modifying(host: String?) -> URLComponents {
+    func modifying(host: String?) -> URLComponents {
         var copy = self
         copy.host = host
         return copy

@@ -1,4 +1,4 @@
-//// Created by Nice Agency
+// Created by Nice Agency
 
 import XCTest
 @testable import Base

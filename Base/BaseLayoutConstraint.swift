@@ -190,7 +190,7 @@ final class BaseLayoutConstraint: NSLayoutConstraint {
 // MARK: -
 
 private extension UIView {
-    private static let xMapping: [NSLayoutAttribute: ((UIView) -> NSLayoutXAxisAnchor)] = [
+    private static let xMapping: [NSLayoutConstraint.Attribute: ((UIView) -> NSLayoutXAxisAnchor)] = [
         .left: { $0.leftAnchor },
         .right: { $0.rightAnchor },
         .leading: { $0.leadingAnchor },
@@ -201,14 +201,14 @@ private extension UIView {
         .trailingMargin: { $0.trailingAnchor }
     ]
     
-    private static let yMapping: [NSLayoutAttribute: ((UIView) -> NSLayoutYAxisAnchor)] = [
+    private static let yMapping: [NSLayoutConstraint.Attribute: ((UIView) -> NSLayoutYAxisAnchor)] = [
         .top: { $0.topAnchor },
         .bottom: { $0.bottomAnchor },
         .topMargin: { $0.topAnchor },
         .bottomMargin: { $0.bottomAnchor }
     ]
     
-    func xAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutXAxisAnchor {
+    func xAxisAnchor(forAttribute attr: NSLayoutConstraint.Attribute) -> NSLayoutXAxisAnchor {
         guard let anchorMapping = UIView.xMapping[attr] else {
             assertionFailure("Invalid attribute supplied")
             return leadingAnchor
@@ -216,7 +216,7 @@ private extension UIView {
         
         return anchorMapping(self)
     }
-    func yAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutYAxisAnchor {
+    func yAxisAnchor(forAttribute attr: NSLayoutConstraint.Attribute) -> NSLayoutYAxisAnchor {
         guard let anchorMapping = UIView.yMapping[attr] else {
             assertionFailure("Invalid attribute supplied")
             return topAnchor
@@ -227,7 +227,7 @@ private extension UIView {
 }
 
 private extension UILayoutGuide {
-    private static let xMapping: [NSLayoutAttribute: ((UILayoutGuide) -> NSLayoutXAxisAnchor)] = [
+    private static let xMapping: [NSLayoutConstraint.Attribute: ((UILayoutGuide) -> NSLayoutXAxisAnchor)] = [
         .left: { $0.leftAnchor },
         .right: { $0.rightAnchor },
         .leading: { $0.leadingAnchor },
@@ -238,14 +238,14 @@ private extension UILayoutGuide {
         .trailingMargin: { $0.trailingAnchor }
     ]
     
-    private static let yMapping: [NSLayoutAttribute: ((UILayoutGuide) -> NSLayoutYAxisAnchor)] = [
+    private static let yMapping: [NSLayoutConstraint.Attribute: ((UILayoutGuide) -> NSLayoutYAxisAnchor)] = [
         .top: { $0.topAnchor },
         .bottom: { $0.bottomAnchor },
         .topMargin: { $0.topAnchor },
         .bottomMargin: { $0.bottomAnchor }
     ]
     
-    func xAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutXAxisAnchor {
+    func xAxisAnchor(forAttribute attr: NSLayoutConstraint.Attribute) -> NSLayoutXAxisAnchor {
         guard let anchorMapping = UILayoutGuide.xMapping[attr] else {
             assertionFailure("Invalid attribute supplied")
             return leadingAnchor
@@ -253,7 +253,7 @@ private extension UILayoutGuide {
         
         return anchorMapping(self)
     }
-    func yAxisAnchor(forAttribute attr: NSLayoutAttribute) -> NSLayoutYAxisAnchor {
+    func yAxisAnchor(forAttribute attr: NSLayoutConstraint.Attribute) -> NSLayoutYAxisAnchor {
         guard let anchorMapping = UILayoutGuide.yMapping[attr] else {
             assertionFailure("Invalid attribute supplied")
             return topAnchor

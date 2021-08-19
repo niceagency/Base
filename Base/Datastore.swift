@@ -15,7 +15,7 @@ public enum ContextSavePolicy {
 }
 
 public extension NSManagedObjectContext {
-    public func backgroundChildContext(savePolicy: ContextSavePolicy = .none) -> NSManagedObjectContext {
+    func backgroundChildContext(savePolicy: ContextSavePolicy = .none) -> NSManagedObjectContext {
         
         let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         moc.parent = self

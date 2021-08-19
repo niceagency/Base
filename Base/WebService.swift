@@ -36,7 +36,7 @@ extension NSError {
 
 extension URLSession {
     
-    private func handleErrorFor<A>( //swiftlint:disable:this function_parameter_count
+    private func handleErrorFor<A>( // swiftlint:disable:this function_parameter_count
         error: Error?,
         data: Data?,
         request: URLRequest,
@@ -147,7 +147,7 @@ public final class Webservice {
         self.defaultHeaders = defaultHeaders
     }
     
-    public func request<A>(_ resource: Resource<A>, //swiftlint:disable:this function_body_length
+    public func request<A>(_ resource: Resource<A>, // swiftlint:disable:this function_body_length
                            withBehavior additionalBehavior: RequestBehavior? = nil,
                            networkFailure: ((NAError<NetworkError>) -> Void)? = nil,
                            completion: @escaping (Result<A>) -> Void) {
